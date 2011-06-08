@@ -1,0 +1,9 @@
+
+
+
+cd /var/www
+sudo chown seabird.seabird .
+git clone this repo!
+
+# Then find the instructions and follow them
+
