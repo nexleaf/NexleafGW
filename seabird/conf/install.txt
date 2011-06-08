@@ -128,10 +128,8 @@ cd /var/www/seabird/root
 #
 #
 #
-cd /var/www/seabird
-mkdir robin-dash
-cd robin-dash
-git pull https://github.com/nexleaf/robin-dash.git
+cd /var/www/seabird/
+git clone -b deployed https://github.com/nexleaf/robin-dash.git
 cd src
 cp -a * /var/www/seabird/root/mesh/
 sudo chown -R www-data.www-data /var/www/seabird/root/mesh
