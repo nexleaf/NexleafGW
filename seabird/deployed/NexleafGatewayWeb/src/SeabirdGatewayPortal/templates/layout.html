@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+        <head>
+                <title>{% block title %}{% endblock %}</title>
+
+                <!-- <script type="text/javascript" src="/seabird/static/js/jquery-1.4.2.min.js"></script> -->
+
+                <link rel="stylesheet" type="text/css" href="/seabird/static/css/blueprint/screen.css" media="screen, projection" />
+                <link rel="stylesheet" type="text/css" href="/seabird/static/css/blueprint/print.css" media="print"/>
+		<!--[if lt IE 8]><link rel="stylesheet" href="/seabird/static/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+
+                <style>
+                {% block styles %}{% endblock %}
+                </style>
+
+                <script type="text/javascript">
+                {% block scripts %}{% endblock %}
+                </script>
+        </head>
+
+        <body>
+
+{% url SeabirdWebPortal.views.home.home as homeurl %}
+
+<div class="container2">
+
+<div class="span-20 left">
+<img src="/seabird/static/images/logo.gif" alt="Nexleaf Analytics">
+Add UCSC Logo too!
+<h1>Wildlife Acoustic Monitor</h1>
+</div>
+
+<hr />
+
+<div class="span-4 colborder">
+<a href="{% url SeabirdGatewayPortal.views.home.home %}">Home</a>
+</div>
+
+<div class="span-4 colborder">
+<a href="{% url SeabirdGatewayPortal.views.files.view_incoming %}">In/Out Files</a>
+</div>
+
+<div class="span-4 colborder">
+<a href="{% url SeabirdGatewayPortal.views.cron.view_cron %}">cron status</a>
+</div>
+
+
+<div class="span-4 colborder">
+<a href="{% url SeabirdGatewayPortal.views.rsync.view_rsync %}">rsync logs</a>
+</div>
+
+
+<div class="span-4 colborder">
+{% if user.is_authenticated %}
+<a href="{% url django.contrib.auth.views.logout %}">Logout</a>: {{ user.username }}
+{% else %}
+<a href="{% url django.contrib.auth.views.login %}">Login</a>
+{% endif %}
+</div>
+
+
+<div class="span-4 colborder">
+<a href="{% url admin:index %}">Admin</a>
+</div>
+
+<!--
+<div class="span-4 colborder">
+Download (todo)
+</div>
+-->
+
+
+<hr />   
+
+
+
+	{% block header %}{% endblock %}
+	
+	{% block content %}{% endblock %}
+
+
+</div>
+
+
+        </body>
+</html>

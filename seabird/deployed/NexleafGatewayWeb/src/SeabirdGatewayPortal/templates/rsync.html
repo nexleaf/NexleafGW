@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<br>
+Rsync & Other log files
+<br>
+<br>
+{% if incout.has_previous %}
+<a href="?page={{ incout.previous_page_number }}">&lt;--</a>
+{% endif %}
+{{ incout.number }} of {{ incout.paginator.num_pages }}
+{% if incout.has_next %}
+<a href="?page={{ incout.next_page_number }}">--&gt;</a>
+{% endif %}
+<br><br>
+
+<table>
+<tr>
+<td>Logfile</td>
+<td>Size in Bytes</td>
+</tr>
+{% for inc in incout.object_list %}
+<tr>
+<td><a href="/log/{{ inc.filename }}">{{ inc.filename }}</a></td>
+<td>{{ inc.size }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+<br>
+{% if incout.has_previous %}
+<a href="?page={{ incout.previous_page_number }}">&lt;--</a>
+{% endif %}
+{{ incout.number }} of {{ incout.paginator.num_pages }}
+{% if incout.has_next %}
+<a href="?page={{ incout.next_page_number }}">--&gt;</a>
+{% endif %}
+
+
+
+{% endblock %}
+

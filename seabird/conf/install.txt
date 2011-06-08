@@ -1,0 +1,151 @@
+
+
+# Use Ubuntu Server 10.4 i386
+
+# Name boxes
+# seabird1 - taken
+# seabird2 - taken
+
+# partition:
+# / 20GB bootable noatime
+# swap 2GB
+# /var RemainingGB noatime
+#
+
+# user seabird
+# pass word is the usual
+# use the same pass for the db password later on
+
+#
+# pick LAMP and openssh, if forget here, run tasksel
+#
+
+apt-get update
+apt-get upgrade
+
+# add repo for fit-pc kernels and ebox to /etc/apt/sources.list
+# deb http://fit-pc2.com/download/ubuntu/dists/lucid binary/
+# deb-src http://fit-pc2.com/download/ubuntu/dists/lucid source/
+# deb http://ppa.launchpad.net/zentyal/2.0/ubuntu lucid main
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10E239FF
+
+apt-get update
+apt-get install linux-image-2.6.35-34-fitpc2 linux-headers-2.6.35-34-fitpc2 libapache2-mod-wsgi
+shutdown -r now
+
+apt-get install zentyal
+
+# visit IP of fitpc at https://theip:443/
+#
+# from ebox add modules: 
+# Certificate Authority, DHCP Service, DNS Service, Firewall, Monitor, Network Configuration, Network Services, VPN Service, NTP server
+#
+# ebox configure:
+# - eth0 external, dhcp
+# - eth1 dhcpserver 10.0.0.1
+#
+# System -> Date/Time verify ntp enabled 
+# dhcp server add range: 10.0.0.30 10.0.0.254
+# add network service http
+# firewall stuff: let in ssh, ebox, http
+# port forward: 131.179.144.62 port 80 to localhost
+# port forward: 1.2.3.4 port ALL to localhost
+# dns set: 10.0.0.1 to be seabird.nexleaf.org seabird-dev.nexleaf.org
+#
+# Setup VPN: on main server, issue cert, generate client bundle, load on client
+#
+# Note, may need to remove apparmor for dhcp to work!!!
+#
+
+
+
+#
+# copy the client software into /var
+#
+
+cd /var/www/seabird/conf
+cp ttyS0.conf /etc/init
+cp filemover_logrotate /etc/logrotate.d/filemover
+cp seabird.nexleaf.org /etc/apache2/sites-available/
+cp seabird-dev.nexleaf.org /etc/apache2/sites-available/
+mkdir /var/log/apache2/seabird/
+
+# insert contents of /var/www/seabird/conf/default_append_to_defaultapache.conf to
+# /etc/apache2/sites-available/default and save DOUBLE CHECK AGAINS conf/default !!
+
+
+
+
+a2ensite
+/etc/init.d/apache2 reload
+
+
+apt-get install python-setuptools python-pip libapache2-mod-wsgi nmap phpmyadmin ipython python-matplotlib python-scipy python-numpy python-mysqldb
+easy_install django
+cd /usr/local/lib/python2.6/dist-packages/
+ln -s Dja* django
+
+# go to http://the_address/phpmyadmin
+# login, create a DB called seabird with autogen password (through privlages)
+# copy password into /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/settings.py
+# seabird1: AQ4xv4y5zMGCYtE2
+# seabird2: Mcx9cS2KtjePb5HZ
+
+cd /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/
+./manage.py syncdb
+# user seabird, password is the normal one
+
+
+#
+# Setup filemover cron from website! Use button to enable cron
+#
+# Setup password for rsync server in /var/www/seabird/bin/filemover
+#
+
+#
+# Setup upload test in files for speed test min
+#
+# http://www.speedtest.net/mini.php
+# http://c.speedtest.net/mini/mini.zip
+#
+#
+cd /var/www/seabird/root
+mkdir uptest
+cd uptest
+wget http://c.speedtest.net/mini/mini.zip
+unzip mini.zip
+ln -s index-php.html index.php
+
+#
+# Setup download test
+#
+cd /var/www/seabird/root
+./gen_downloads.sh
+
+#
+# Setup the mesh dashboard
+#
+#
+#
+cd /var/www/seabird
+mkdir robin-dash
+cd robin-dash
+git pull https://github.com/nexleaf/robin-dash.git
+cd src
+cp -a * /var/www/seabird/root/mesh/
+sudo chown -R www-data.www-data /var/www/seabird/root/mesh
+cd /var/www/sebird/root/mesh
+# Copy the configs over! Make sure to specify the right network name!
+scp seabird@seabird.nexleaf.org:/var/www/seabird/root/mesh/seabirdtestbed* .
+# setup cron as root!
+sudo su -
+crontab -e
+# m h  dom mon dow   command
+#*/30 * * * * /var/www/seabird/root/mesh/resources/scripts/storeandforwardcheckin.py /var/www/seabird/root/mesh/ thenetwork
+#*/30 * * * * /var/www/seabird/root/mesh/resources/scripts/configsync.sh thenetwork networkpassword
+#
+#
+
+
+

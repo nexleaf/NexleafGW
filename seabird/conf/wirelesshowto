@@ -1,0 +1,36 @@
+
+setup wpa stuff:
+wpa_passphrase NL1 nexleaf1 >> nloffice.conf
+
+
+Starting with eBox 1.1 Alpha, it is possible to set hooks that can be run at several different moments while changes to a module are being saved. Using this feature it is possible to configure a wireless card in an eBox friendly way.
+
+The eBox Network Module provides a helper script called "ebox-setup-wireless" to help us with this task.
+
+If we have an interface called wlan0 that we want to configure, we just need to write a file called /etc/ebox/hooks/network.postsetconf with the following script:
+
+#!/bin/sh
+
+# set WLAN_IFACE to the name of your interface
+export WLAN_IFACE=wlan0
+
+# set WLAN_IFACE to the ESSID of your network
+export WLAN_ESSID=mindstorm
+
+# set WLAN_CONF to contain any extra configuration needed in /etc/network/interfaces for your 
+# interface, for example, uncomment this line if you want to set up
+# export WLAN_CONF="wireless-mode master"
+# export WLAN_CONF="wpa-conf /root/nloffice.conf"
+
+# execute the helper script
+/usr/share/ebox-network/ebox-setup-wireless
+
+# if you need to setup several wireless cards just set the variables and run the script again
+
+# we need to tell ebox we have updated the interfaces file so we are not asked in the interface
+# every time we save
+/usr/share/ebox/ebox-update-file-digest network /etc/network/interfaces
+
+exit 0
+
+

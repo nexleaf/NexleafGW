@@ -1,0 +1,90 @@
+#!/bin/bash
+
+
+
+export RSYNC_PASSWORD=SETME
+#export PATH=$PATH:/opt/bin
+#export LD_LIBRARY_PATH=/opt/lib:$LD_LIBRARY_PATH
+source /var/www/seabird/conf/filemover.conf
+alias ls=ls
+
+RSOPTS="-q --timeout=45 --contimeout=45 --partial-dir=/var/www/seabird/tmp --delay-updates --temp-dir=/var/www/seabird/tmp --remove-source-files"
+
+# the cmd: rsync -v -v --no-motd --partial-dir=/tmp --delay-updates --temp-dir=/tmp -z --remove-source-files --stats -h --progress --password-file=/opt/conf/rsync.pass /opt/tmp/rsynctest/filemover/20090305205919.TO.PE36.bundle_q330_packets.tar.gz.dts rsync://data@169.232.144.204/peruin/filemover/
+
+if [ -z $USER ]; then
+    export USER=data
+fi
+
+if [ -z $NEXT_HOP ]; then
+    echo "No next hop!"
+    exit 1
+fi
+
+if [ -z $SRCID ]; then
+    echo "No SRCID!"
+    exit 1
+fi
+
+if [ -z $DSTID ]; then
+    echo "No DSTID!"
+    exit 1
+fi
+
+
+
+for fmd in $FILEMOVER_DIRS; do
+	if [ -z $fmd ]; then
+    		echo "No filemover dir!"
+    		exit 1
+	fi
+done
+
+mkdir -p /var/lock
+LPID=""
+if [ -e /var/lock/fm ]; then
+    LPID=`cat /var/lock/fm`
+    THEPROC=`echo $0 | sed -e 's/.*\///g'`
+    ps -p $LPID | grep -q $THEPROC
+    if [ $? -eq 0 ]; then
+	echo "$THEPROC already running as pid $LPID!"
+	exit 1
+    fi
+fi
+
+echo $$ > /var/lock/fm
+
+
+
+for THEDIR in $FILEMOVER_DIRS; do
+
+THEFILES=`ls -r $THEDIR`
+
+for FILE in $THEFILES; do
+
+    FILESIZE=`stat -c "%s" $THEDIR/$FILE`
+    STARTTIME=`date +%s`
+    RS_CMD=`rsync $RSOPTS $THEDIR/$FILE rsync://$USER@$NEXT_HOP/seabirdin/$THEDIR/ &> /dev/null`
+    if [ $? -ne 0 ]; then
+    	if [ -e /var/www/seabird/log/ ]; then
+		LOGDATE=`date +"%Y%m%d_%H%M%S"`
+		echo "FILEMOVER_ERR $LOGDATE $THEDIR/$FILE $DSTID $SRCID - $? - $RS_CMD" >> /var/www/seabird/log/rsync.log
+	fi
+	continue
+    fi
+    ENDTIME=`date +%s`
+    
+    TTIME=$((($ENDTIME-$STARTTIME)*1000))
+    if [ $TTIME -eq 0 ]; then
+	TTIME=1000
+    fi 
+    BANDW=$(($FILESIZE/$TTIME))
+
+    if [ -e /var/www/seabird/log/ ]; then
+	LOGDATE=`date +"%Y%m%d_%H%M%S"`
+	echo "FILEMOVER_OK $LOGDATE $THEDIR/$FILE $DSTID $SRCID $TTIME 0 $BANDW $FILESIZE" >> /var/www/seabird/log/rsync.log
+    fi
+
+done
+
+done

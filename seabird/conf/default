@@ -1,0 +1,82 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www/seabird/root
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/seabird/root/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride all
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache2/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/log/apache2/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+        Alias /seabird/media /usr/local/lib/python2.6/dist-packages/django/django/contrib/admin/media
+        <Directory /usr/local/lib/python2.6/dist-packages/django/django/contrib/admin/media>
+                Order deny,allow
+                Allow from all
+                SetHandler None
+        </Directory>
+
+       WSGIDaemonProcess seabirdwebportalip user=seabird group=seabird python-path=/var/www/seabird/deployed
+       WSGIScriptAlias /seabird /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/django.wsgi
+       WSGIProcessGroup seabirdwebportalip
+       <Directory /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal>
+           Order allow,deny
+           Allow from all
+       </Directory>
+
+    Alias /seabird/static /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/static
+    <Directory /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/static>
+                #Options Indexes
+                #TODO: remove above Indexes
+                Order deny,allow
+                Allow from all
+                SetHandler None
+    </Directory>
+
+    Alias /incoming /var/www/seabird/incoming
+    <Directory /var/www/seabird/incoming>
+                Options -Indexes
+                Order deny,allow
+                Allow from all
+                SetHandler None
+    </Directory>
+
+    Alias /log /var/www/seabird/log
+    <Directory /var/www/seabird/log>
+                Options -Indexes
+                Order deny,allow
+                Allow from all
+                SetHandler None
+    </Directory>
+
+
+</VirtualHost>

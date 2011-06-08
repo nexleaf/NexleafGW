@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+<br>
+crontab -l command output
+<br>
+
+<pre>
+{{ status }}
+{{ output }}
+</pre>
+
+<h2><a href="{% url SeabirdGatewayPortal.views.cron.toggle_default_cron %}">Toggle Default</a></h2>
+
+<hr>
+<h2>Manual Set</h2>
+
+<form action="{% url SeabirdGatewayPortal.views.cron.set_cron %}" method=POST>
+<textarea name="cronentry" rows="5" cols="500">{{ default }}</textarea>{% csrf_token %}
+<br>
+<input type=submit value="submit">
+</form>
+
+<br>
+<hr><hr><hr>
+<h2>Notes:</h2>
+Cron entries should look like this (the below is the default and means every 5 mins):
+<pre>
+# m h  dom mon dow   command
+*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null
+</pre>
+
+{% endblock %}
