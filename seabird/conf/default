@@ -46,9 +46,16 @@
         </Directory>
 
        WSGIDaemonProcess seabirdwebportalip user=seabird group=seabird python-path=/var/www/seabird/deployed
-       WSGIScriptAlias /seabird /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/django.wsgi
        WSGIProcessGroup seabirdwebportalip
+
+       WSGIScriptAlias /seabird /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal/django.wsgi
        <Directory /var/www/seabird/deployed/NexleafGatewayWeb/src/SeabirdGatewayPortal>
+           Order allow,deny
+           Allow from all
+       </Directory>
+
+       WSGIScriptAlias /updater /var/www/seabird/updater/django.wsgi
+       <Directory /var/www/seabird/updater>
            Order allow,deny
            Allow from all
        </Directory>

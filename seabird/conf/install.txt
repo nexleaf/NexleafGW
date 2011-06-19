@@ -146,4 +146,17 @@ crontab -e
 #
 
 
+#####################
+# Updater code
+
+cd /home/seabird
+git clone https://martin-lukac@github.com/nexleaf/AndroidUpdater.git
+cd /home/seabird/AndroidUpdater/UpdaterServer
+../utils/install.sh
+cd /var/www/seabird/updater/
+cp settings.py settings_local.py
+# set the db
+# munge the secret key
+# get rid of the last few lines
+# apache aditions already existed
 
