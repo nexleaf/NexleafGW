@@ -3,8 +3,10 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import warnings
 
+from django.conf import settings
+
 ProjectName = 'WAM'
-LogFilename = '/var/www/seabird/log/gateway.log'
+LogFilename = os.path.join(settings.LOG_DIR, 'gateway.log')
 Recurrance   = 'midnight'  # Seconds
 TimeInterval = 1    # Time Interval after which to start logging new file
 

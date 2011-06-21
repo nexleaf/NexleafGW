@@ -1,12 +1,12 @@
-# Django settings for SuryaWebPortal project.
-
+# Django settings for SeabirdGatewayPortal project.
 import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Martin Lukac', 'martin@nexleaf.org'),
+    ('Lucas Howell', 'LJHowell@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -45,14 +45,17 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+# Path to project installation.
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'static')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/seabird/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -85,9 +88,6 @@ LOGIN_URL = '/seabird/accounts/login/'
 LOGOUT_URL = '/seabird/accounts/login/'
 LOGIN_REDIRECT_URL = '/seabird/'
 
-
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
-
 TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'templates')
 )
@@ -103,6 +103,16 @@ INSTALLED_APPS = (
     'SeabirdGatewayPortal',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS =(
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'SeabirdGatewayPortal.common.context_processors.media_url'
+)
+
 
 #########################
 # Data Portal Settings
@@ -115,6 +125,10 @@ ZIP_COMPRESS=9
 
 CRON_FILE="/var/www/seabird/conf/add_to_crontab.txt"
 LOG_DIR="/var/www/seabird/log/"
+
+# Determine if in production or dev, since DEBUG is always True
+# Override it in settings_local for local dev.
+DEV_ENVIRONMENT = False
 
 # Used to override these settings for local development.
 try:
