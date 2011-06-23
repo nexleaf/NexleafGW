@@ -130,6 +130,10 @@ LOG_DIR="/var/www/seabird/log/"
 # Override it in settings_local for local dev.
 DEV_ENVIRONMENT = False
 
+# URLs to Main Server.
+MAIN_SERVER_URL = 'http://seabird.nexleaf.org/seabird/'
+BULK_CONFIGS_URL = os.path.join(MAIN_SERVER_URL, 'configuration/bulk/')
+
 # Used to override these settings for local development.
 try:
     from settings_local import *

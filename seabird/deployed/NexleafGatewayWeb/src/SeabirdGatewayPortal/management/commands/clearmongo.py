@@ -46,7 +46,7 @@ class Command(BaseCommand):
             raise CommandError('Error importing from mongoengine. Please ensure that mongoengine is installed')
         
         # Drop the database SuryaDB (This Implies That we lose all the stored images as well)
-        db = mongoengine.connect('SeabirdDB')
+        db = mongoengine.connect('SeabirdGWDB')
         gfs = gridfs.GridFS(db)
         
         UploadData.drop_collection()

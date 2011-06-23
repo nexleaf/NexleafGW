@@ -15,9 +15,12 @@ log.setLevel(logging.DEBUG)
 
 def home(request):
     log.info("home page access")
-
+    
     (status, output) = commands.getstatusoutput("uptime")
     t = loader.get_template('home.html')
     c = RequestContext(request, {'yes': True, 'output': output})
     return HttpResponse(t.render(c))
+
+
+
 
