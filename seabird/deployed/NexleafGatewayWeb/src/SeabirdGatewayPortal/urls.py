@@ -17,7 +17,8 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
     url(r'^cron/set/$', 'cron.set_cron', name='set_cron'),
     
     # Ready only views for Devices and Configs
-    # url(r'^devices/$', device.show_all_devices, name='show_all_devices'),
+    url(r'^devices/$', 'device.show_all_devices', name='show_all_devices'),
+    url(r'^configs/(?P<config_id>\w+)/show/$', 'config.show_config', name='show_config'),
     # url(r'^configs/$', device.show_all_configs, name='show_all_configs'),
     
     

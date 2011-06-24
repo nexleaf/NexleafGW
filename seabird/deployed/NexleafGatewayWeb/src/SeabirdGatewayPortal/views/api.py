@@ -1,4 +1,4 @@
-import logging, socket, sys, urllib2
+import cgi, logging, socket, sys, urllib2
 
 from datetime import datetime, timedelta
 from xml.dom import minidom
@@ -38,14 +38,18 @@ def get_bulk_configs(request):
         # Log the error and exit.
         e = sys.exc_info()[1]
         log.error('ERROR: %s' % e)
-        return HttpResponse('ERROR. %s' % s)
+        return HttpResponse('ERROR: %s' % cgi.escape(str(e)))
     
     all_configs = parsed_xml.getElementsByTagName('Configuration')
     for c in all_configs:
-        # Get or create the configuration.
+        # Extract device and config data from the xml.
+        device_id = c.getAttribute('assignToDeviceId').strip()
         config_title = c.getElementsByTagName('Name')[0].firstChild.data.strip()
-        config_xml = c.toxml()
         config_version = c.getElementsByTagName('Version')[0].firstChild.data.strip()
+        
+        # Remove the assignToDeviceId attribute before storing config.
+        c.removeAttribute('assignToDeviceId')
+        config_xml = c.toxml()
         
         try:
             # Find existing config - Version is Unique!
@@ -60,7 +64,6 @@ def get_bulk_configs(request):
         config.save()
         
         # Get or create the device associated with this configuration.
-        device_id = c.getAttribute('assignToDeviceId').strip()
         try:
             # Find existing config - Version is Unique!
             device = Device.objects.get(device_id=device_id)

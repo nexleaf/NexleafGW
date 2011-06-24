@@ -1,0 +1,15 @@
+table.data_table {border-color: #ccc;border-width: 0 0 1px 1px;border-style: solid;}
+table.data_table th, table.data_table td {border-color: #ccc;border-width: 1px 1px 0 0;border-style: solid;vertical-align:top;}
+table.data_table tr.highlight td {background:#fffacd;}
+
+table.all_devices {width:800px;}
+table.all_devices th {vertical-align:top;}
+
+table.config_table {}
+table.config_table th {width:120px;}
+table.config_table th, table.config_table td {vertical-align:top; border-bottom:1px solid #e5e5e5;}
+table.config_table th.noborder {border:none;}
+
+.bulk_update {font-size:1.5em;}
+.center {text-align:center;}
+.clear {clear:both;}
