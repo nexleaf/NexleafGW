@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ page_title }}</h2>
+
+<table class="device_table">
+    <tr>
+        <th>Device ID:</th><td>{{ device.device_id }}</td>
+    </tr>
+    <tr>
+        <th>XML Configuration:</th>
+        <td>
+            {% if device.config %}
+                <a href="{% url show_config device.config.id %}">{{ device.config }}</a>
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Last Updated:</th>
+        <td>{{ device.last_updated|date:"M j, Y, g:i a" }}</td>
+    </tr>
+    <tr>
+        <th>Config Request URL:</th>
+        <td>
+            {# <a href="{% url dump_device_config device.deviceId 'test' 'test' %}"> #}
+                /configuration/A1000013772E86/&lt;phone_software_version&gt;/&lt;current_config_version&gt;/
+                {# url dump_device_config device.deviceId 'PHONE_SOFTWARE_VERSION' 'CURRENT_CONFIG_VERSION' #}
+            {# </a> #}
+            <br /><br />
+        </td>
+    </tr>
+</table>
+
+
+{% endblock %}

@@ -5,10 +5,15 @@ table.data_table tr.highlight td {background:#fffacd;}
 table.all_devices {width:800px;}
 table.all_devices th {vertical-align:top;}
 
+table.device_table {}
+table.device_table th {width:124px;vertical-align:top;padding-right:2px;}
+table.device_table th, table.device_table td {vertical-align:top; border-bottom:1px solid #e5e5e5;}
+
 table.config_table {}
 table.config_table th {width:120px;}
 table.config_table th, table.config_table td {vertical-align:top; border-bottom:1px solid #e5e5e5;}
 table.config_table th.noborder {border:none;}
+
 
 .bulk_update {font-size:1.5em;}
 .center {text-align:center;}

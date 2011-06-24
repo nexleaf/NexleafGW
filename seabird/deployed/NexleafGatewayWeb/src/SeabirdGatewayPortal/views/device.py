@@ -39,3 +39,13 @@ def show_all_devices(request):
         }, context_instance=RequestContext(request))
 
 
+# View Individual Device
+@login_required
+def show_device(request, device_id=None):
+    device = get_document_or_404(Device, device_id=device_id)
+    return render_to_response('device/device.html', 
+        {
+            'device':device,
+            'page_title': 'View Device: %s' % device.device_id,
+        }, context_instance=RequestContext(request))
+

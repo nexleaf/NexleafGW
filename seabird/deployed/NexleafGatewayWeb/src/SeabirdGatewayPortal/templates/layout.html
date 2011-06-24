@@ -27,10 +27,7 @@
         {% block scripts %}{% endblock %}
     </script>
 </head>
-
 <body>
-
-{% url SeabirdWebPortal.views.home.home as homeurl %}
 
 <div class="container2">
 
@@ -42,29 +39,34 @@
 
 <hr />
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     <a href="{% url home %}">Home</a>
 </div>
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     <a href="{% url show_all_devices %}">Devices</a>
 </div>
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
+    <a href="{% url show_all_configs %}">Configs</a>
+</div>
+
+
+<div class="span-2 colborder">
     <a href="{% url view_incoming %}">In/Out Files</a>
 </div>
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     <a href="{% url view_cron %}">Cron Status</a>
 </div>
 
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     <a href="{% url view_rsync %}">Rsync Logs</a>
 </div>
 
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     {% if user.is_authenticated %}
         <a href="{% url auth_logout %}">Logout</a>: {{ user.username }}
     {% else %}
@@ -73,7 +75,7 @@
 </div>
 
 
-<div class="span-3 colborder">
+<div class="span-2 colborder">
     <a href="{% url admin:index %}">Admin</a>
 </div>
 

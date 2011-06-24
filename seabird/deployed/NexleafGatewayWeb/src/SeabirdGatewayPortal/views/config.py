@@ -21,6 +21,19 @@ connect('SeabirdGWDB')
 log = getLog('views')
 log.setLevel(logging.DEBUG)
 
+# Show All Configs
+@login_required
+def show_all_configs(request):
+    configs = Config.objects
+    return render_to_response('config/all_configs.html', 
+        {
+            'configs':configs,
+            'page_title': 'All Configurations',
+        }, context_instance=RequestContext(request))
+
+
+
+
 # View Individual Config
 @login_required
 def show_config(request, config_id):
