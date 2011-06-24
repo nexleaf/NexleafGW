@@ -26,6 +26,12 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
     # API Views
     url(r'^api/configuration/bulk/get/$', 'api.get_bulk_configs', name='get_bulk_configs'),
     
+    # TODO: This should start with /api, but leaving it like this for consistency for device.
+    # TODO: Fix it later.
+    url(r'^configuration/(?P<device_id>\w+)/(?P<software_version>\w+)/(?P<config_version>\w+)/$',
+        'api.dump_device_config', name='dump_device_config'),
+    
+    
     # !! debug output !!
     #(r'^debug/$', debug.debug),
     #(r'^debug/uploads/$', debug.uploads),

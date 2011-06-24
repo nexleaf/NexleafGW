@@ -1,2 +1,3 @@
 # m h  dom mon dow   command
 */5 * * * * /var/www/seabird/bin/filemover &> /dev/null
+1 0 * * * wget http://localhost/api/configuration/bulk/get/ &> /dev/null

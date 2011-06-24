@@ -130,7 +130,9 @@ LOG_DIR="/var/www/seabird/log/"
 # Override it in settings_local for local dev.
 DEV_ENVIRONMENT = False
 
-# URLs to Main Server.
+# URLs to Main Server.  
+# Used for Bulk Configuration Updates and for pinging the primary server with Device Config Requests
+# Could also be overriden in settings_local.py to be a hard coded IP Address of the main server, when necessary.
 MAIN_SERVER_URL = 'http://seabird.nexleaf.org/seabird/'
 BULK_CONFIGS_URL = os.path.join(MAIN_SERVER_URL, 'configuration/bulk/')
 

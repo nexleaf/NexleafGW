@@ -44,3 +44,5 @@ def show_config(request, config_id):
             'page_title': 'View Configuration: %s' % config.title,
         }, context_instance=RequestContext(request))
 
+
+

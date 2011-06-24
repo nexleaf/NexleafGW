@@ -11,6 +11,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.template import Context, loader, RequestContext
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
@@ -30,7 +31,8 @@ def view_cron(request):
     if status == 0:
         default = output
     else:
-        default = "# m h  dom mon dow   command\n*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null"
+        default = '# m h  dom mon dow   command\n*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null\n' + \
+        '1 0 * * * wget http://localhost%s &> /dev/null' % reverse('get_bulk_configs')
     
     t = loader.get_template('cron.html')
     c = RequestContext(request, {'status': status, 'output': output, 'default': default})

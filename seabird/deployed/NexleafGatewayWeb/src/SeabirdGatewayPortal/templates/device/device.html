@@ -26,12 +26,16 @@
     <tr>
         <th>Config Request URL:</th>
         <td>
-            {# <a href="{% url dump_device_config device.deviceId 'test' 'test' %}"> #}
-                /configuration/A1000013772E86/&lt;phone_software_version&gt;/&lt;current_config_version&gt;/
-                {# url dump_device_config device.deviceId 'PHONE_SOFTWARE_VERSION' 'CURRENT_CONFIG_VERSION' #}
-            {# </a> #}
-            <br /><br />
+            <a href="{% url dump_device_config device.device_id 'test' 'test' %}">
+                /configuration/{{ device.device_id }}/&lt;phone_software_version&gt;/&lt;current_config_version&gt;/
+            </a>
         </td>
+    </tr>
+    <tr>
+        <th>
+            Last Config Request:
+        </th>
+        <td>{{ device.last_config_request|date:"M j, Y, g:i a" }}</td>
     </tr>
 </table>
 
