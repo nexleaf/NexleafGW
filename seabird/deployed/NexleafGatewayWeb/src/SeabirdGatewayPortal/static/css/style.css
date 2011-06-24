@@ -18,3 +18,8 @@ table.config_table th.noborder {border:none;}
 .bulk_update {font-size:1.5em;}
 .center {text-align:center;}
 .clear {clear:both;}
+
+
+/* Releases page */
+.releases {}
+.releases h3 {margin-bottom:0.4em;}

@@ -4,7 +4,9 @@ import logging
 import commands
 
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Context, loader, RequestContext
 
@@ -22,5 +24,11 @@ def home(request):
     return HttpResponse(t.render(c))
 
 
+@login_required
+def releases(request):
+    return render_to_response('releases.html', 
+        {
+            'page_title':'Releases',
+        }, context_instance=RequestContext(request))
 
 

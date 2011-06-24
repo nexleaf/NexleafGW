@@ -9,6 +9,7 @@ admin.autodiscover()
 ########################################
 urlpatterns = patterns('SeabirdGatewayPortal.views',
     url(r'^$', 'home.home', name='home'),
+    url(r'^home/releases/$', 'home.releases', name='releases'),
     url(r'^upload/$', 'upload.upload_data', name='upload_data'),
     url(r'^files/$', 'files.view_incoming', name='view_incoming'),
     url(r'^rsync/$', 'rsync.view_rsync', name='view_rsync'),
