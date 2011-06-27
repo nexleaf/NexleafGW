@@ -16,7 +16,7 @@ class Config(Document):
         """Returns all the devices that use this config"""
         
         # Has to be here - causes circular import at the top of file.
-        from Collections.Device import Device
+        from SeabirdGatewayPortal.Collections.Device import Device
         devices = Device.objects(config=self)
         return devices
     

@@ -32,7 +32,7 @@ def view_cron(request):
         default = output
     else:
         default = '# m h  dom mon dow   command\n*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null\n' + \
-        '1 0 * * * wget http://localhost%s &> /dev/null' % reverse('get_bulk_configs')
+        '*/30 * * * * wget http://localhost/seabird%s &> /dev/null' % reverse('get_bulk_configs')
     
     t = loader.get_template('cron.html')
     c = RequestContext(request, {'status': status, 'output': output, 'default': default})
