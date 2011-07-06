@@ -1,4 +1,4 @@
-import cgi, logging, os, socket, sys, urllib2
+import cgi, logging, os, socket, sys, time, urllib2
 
 from datetime import datetime, timedelta
 from xml.dom import minidom
@@ -98,8 +98,13 @@ def dump_device_config(request, device_id, software_version, config_version):
                 'software_version':software_version,
                 'config_version':config_version,
             }).lstrip('/')
-        
+            
+            # Attach Timestamp as GET Var so this can be recorded properly on main server.
             request_url = os.path.join(settings.MAIN_SERVER_URL, config_url)
+            unix_time = time.mktime(datetime.now().timetuple())
+            request_url += '?ut=%i' % int(unix_time)
+            
+            # Try to ping primary server with config request.
             response = urllib2.urlopen(request_url)
             
             # Loop through old requests that failed and were stored.
