@@ -26,7 +26,7 @@ log.setLevel(logging.DEBUG)
 
 # Set default timeout so requests don't hang for too long 
 # and create spinning processes on gateway server.
-socket.setdefaulttimeout(8.0)
+socket.setdefaulttimeout(settings.SOCKET_TIMEOUT)
 
 def get_bulk_configs(request):
     # Grab bulk data from primary server.
