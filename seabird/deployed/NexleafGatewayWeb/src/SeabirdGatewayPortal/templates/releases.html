@@ -7,6 +7,22 @@
 
 <div class="releases">
     
+    <h3>Release 1.1.3 - 08/10/11</h3>
+    <ul>
+        <li>
+            Fixed Bug with the Config Requests coming from the Devices not being forwarded on properly to the Primary Server.
+            <ul>
+                <li>Problem was due to an odd behavior in reversing the device_dump_config url in the production environment.
+                    Problem didn't arise until deployment to actual gateway server.
+                </li>
+                <li>No longer using url reversing for primary server url, simply hard coded it, which should be much more robust</li>
+            </ul>
+        </li>
+        <li>Also added system logging around failed config request attempts so they are easier to debug for future issues.</li>
+    </ul>
+    
+    <hr />
+    
     <h3>Release 1.1.2 - 07/06/11</h3>
     <ul>
         <li>

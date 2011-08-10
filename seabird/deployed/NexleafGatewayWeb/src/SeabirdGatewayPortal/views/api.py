@@ -93,14 +93,13 @@ def dump_device_config(request, device_id, software_version, config_version):
         # Ping the primary server to record the device's request.
         # Cache the ping and retry later if is internet down.
         try:
-            config_url = reverse('dump_device_config', kwargs={
-                'device_id':device.device_id,
-                'software_version':software_version,
-                'config_version':config_version,
-            }).lstrip('/')
+            # MAIN SERVER CONFIG REQUEST URL 
+            # Hard code it to ensure it's pointing to the correct url on the main server (which can change).
+            main_config_url = 'configuration/%s/%s/%s/' % \
+                (device.device_id, software_version, config_version)
             
             # Attach Timestamp as GET Var so this can be recorded properly on main server.
-            request_url = os.path.join(settings.MAIN_SERVER_URL, config_url)
+            request_url = os.path.join(settings.MAIN_SERVER_URL, main_config_url)
             unix_time = time.mktime(datetime.now().timetuple())
             request_url += '?ut=%i' % int(unix_time)
             
@@ -113,6 +112,11 @@ def dump_device_config(request, device_id, software_version, config_version):
                 cr.request_sent = datetime.now()
                 cr.save()
         except:
+            # Log the error for debugging purposes.
+            log.error('CONFIG REQUEST FAILURE - Exception: %s, URL: %s' %
+                (sys.exc_info()[0], request_url)
+            )
+            
             # Initial ping failed - save request for later.
             new_cr = ConfigRequestCache(
                 url=request_url,
