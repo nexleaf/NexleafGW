@@ -26,10 +26,11 @@ crontab -l command output
 <br>
 <hr><hr><hr>
 <h2>Notes:</h2>
-Cron entries should look like this (the below is the default and means every 5 mins):
+Cron entries should look like this (the below is the default and means every 5 mins for the first, and every 30 mins for the second):
 <pre>
 # m h  dom mon dow   command
 */5 * * * * /var/www/seabird/bin/filemover &> /dev/null
+0,30 * * * * wget http://localhost/seabird/api/configuration/bulk/get/ &> /dev/null
 </pre>
 
 {% endblock %}
