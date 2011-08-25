@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<hr>
+Total files waiting for upload: {{ totalfiles }}
+<br>
+Total data size waiting for upload: {{ totaldata }}
+<br>
+<hr>
+Table shows "number of audio files" / "number of log files"
+<br>
+
+<table border=1>
+<tr>
+<td>Device</td>
+{% for d in dates %}
+<td>{{ d }}</td>
+{% endfor %}
+</tr>
+{% for dev in devdata %}
+<tr>
+<td><a href="http://seabird.nexleaf.org/seabird/devices/{{ dev.sta }}/show">{{ dev.sta }}</a></td>
+{% for dd in dev.daydata %}
+<td>{{ dd.audio }} / {{ dd.logs }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}
+
