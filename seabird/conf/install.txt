@@ -67,6 +67,7 @@ apt-get install zentyal
 cd /var/www/seabird/conf
 cp ttyS0.conf /etc/init
 cp filemover_logrotate /etc/logrotate.d/filemover
+cp seabird_logrotate /etc/logrotate.d/seabird
 cp seabird.nexleaf.org /etc/apache2/sites-available/
 cp seabird-dev.nexleaf.org /etc/apache2/sites-available/
 mkdir /var/log/apache2/seabird/
@@ -159,4 +160,13 @@ cp settings.py settings_local.py
 # munge the secret key
 # get rid of the last few lines
 # apache aditions already existed
+
+
+#####################
+# fix mongo reboot issue:
+cp /var/www/seabird/conf/upstart_mongodb.conf /etc/init/mongodb.conf
+
+
+
+
 
