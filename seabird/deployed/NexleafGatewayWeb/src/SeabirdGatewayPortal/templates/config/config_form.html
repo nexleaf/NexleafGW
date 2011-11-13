@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ page_title }}</h2>
+
+
+{% if edit %}
+    <form method="post" action="{% url edit_config config.id %}">
+{% else %}
+    <form method="post" action="{% url new_config %}">
+{% endif %}
+    {% csrf_token %}
+    <table class="form_table">
+        {{ form.as_table }}
+        <tr>
+            <th></th>
+            <td>
+                {% if edit %}
+                    <input type="submit" value="Update Config" />
+                    &nbsp;or&nbsp;
+                    <a href="{% url show_config config.id %}">Cancel</a>
+                {% else %}
+                    <input type="submit" value="Create Config" />
+                    &nbsp;or&nbsp;
+                    <a href="{% url show_all_configs %}">Cancel</a>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    
+    </form>
+    <hr>
+{% endblock %}

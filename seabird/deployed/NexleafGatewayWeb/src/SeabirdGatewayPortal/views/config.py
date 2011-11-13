@@ -12,7 +12,7 @@ from mongoengine.django.shortcuts import get_document_or_404
 
 from SeabirdGatewayPortal.Collections.Config import Config
 from SeabirdGatewayPortal.Collections.Device import Device
-
+from SeabirdGatewayPortal.forms.config import ConfigForm
 from SeabirdGatewayPortal.utils.Logger import getLog
 
 # Connect to MongoDB - Gateway.
@@ -32,8 +32,6 @@ def show_all_configs(request):
         }, context_instance=RequestContext(request))
 
 
-
-
 # View Individual Config
 @login_required
 def show_config(request, config_id):
@@ -45,4 +43,36 @@ def show_config(request, config_id):
         }, context_instance=RequestContext(request))
 
 
+# Edit Existing Config
+@login_required
+def edit_config(request, config_id):
+    config = get_document_or_404(Config, id=config_id)
+    if request.method == 'POST':
+        # Include pk for uniqueness validation.
+        form = ConfigForm(request.POST, config_id=config.id)
+        if form.is_valid():
+            # Get post data from the form into the collection.
+            for field, value in form.cleaned_data.items():
+                if field in config._fields.keys():
+                    config[field] = value
+            config.save()
+            # messages.success(request, 'You have successfully \
+            # updated the XML Configuration: %s.' % config.title)
+            return HttpResponseRedirect(reverse('show_config',
+                kwargs={'config_id':config.id}))
+        else:
+            pass
+            # messages.error(request, FORM_ERROR_MSG)
+    else:
+        # Initialize the form
+        fields = config._fields.keys()
+        field_dict = dict([(name, config[name]) for name in fields])
+        form = ConfigForm(initial=field_dict)
+    return render_to_response('config/config_form.html', 
+        {
+            'page_title': 'Edit Configuration: %s' % config.title,
+            'edit':True,
+            'config':config,
+            'form':form,
+        }, context_instance=RequestContext(request))
 
