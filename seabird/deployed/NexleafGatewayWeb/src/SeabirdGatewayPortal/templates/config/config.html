@@ -5,13 +5,6 @@
 {% block content %}
 <h2>{{ page_title }}</h2>
 
-<p class="actions">
-    <strong>Actions:</strong>&nbsp;
-    <a href="{% url edit_config config.id %}">Edit Configuration</a>
-    {# &nbsp;|&nbsp; #}
-    {# <a href="{% url delete_config config.id %}">Delete Configuration</a> #}
-</p>
-
 <table class="config_table">
     <tr>
         <th>Title:</th>
@@ -47,5 +40,10 @@
         <td colspan="2"><pre>{{ config.xml }}</pre></td>
     </tr>
 </table>
+
+<p class="actions">
+    <strong>Actions:</strong>&nbsp;
+    <a href="{% url edit_config config.id %}">Edit Configuration</a>
+</p>
 
 {% endblock %}

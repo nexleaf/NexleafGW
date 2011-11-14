@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 
 from SeabirdGatewayPortal.views import config
+from SeabirdGatewayPortal.views import device
 
 admin.autodiscover()
 
@@ -23,13 +24,14 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
     # Devices
     url(r'^devices/$', 'device.show_all_devices', name='show_all_devices'),
     url(r'^devices/(?P<device_id>\w+)/show/$', 'device.show_device', name='show_device'),
+    url(r'^devices/new/$', device.new_device, name='new_device'),
+    url(r'^devices/(?P<device_id>\w+)/edit/$', device.edit_device, name='edit_device'),
     
     
     # Configs
     url(r'^configs/$', config.show_all_configs, name='show_all_configs'),
-    url(r'^configs/(?P<config_id>\w+)/show/$', config.show_config, name='show_config'),    
-    
-    # url(r'^configs/new/$', config.new_config, name='new_config'),
+    url(r'^configs/(?P<config_id>\w+)/show/$', config.show_config, name='show_config'),
+    url(r'^configs/new/$', config.new_config, name='new_config'),
     url(r'^configs/(?P<config_id>\w+)/edit/$', config.edit_config, name='edit_config'),
     
     

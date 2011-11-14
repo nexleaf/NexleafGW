@@ -26,23 +26,26 @@
             <span class="small">Via Bulk Updates</span>
         </th>
     </tr>
-{% for device in devices %}
-    <tr class="{% cycle 'even' 'odd' %}">
-        <td><a href="{% url show_device device.device_id %}">{{ device.device_id }}</a></td>
-        <td><a href="{% url show_config device.config.id %}">{{ device.config }}</a></td>
-        <td>{{ device.last_updated|date:"M j, Y, g:i a" }}</td>
-    </tr>
-{% empty %}
-    <tr class="even">
-        <td colspan="3">
-            <p class="center">
-                No Devices Found.  Please perform a <a href="{% url get_bulk_configs %}">Bulk Update</a>.
-            </p>
-        </td>
-    </tr>
-
-{% endfor %}
-
+    {% for device in devices %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td><a href="{% url show_device device.device_id %}">{{ device.device_id }}</a></td>
+            <td><a href="{% url show_config device.config.id %}">{{ device.config }}</a></td>
+            <td>{{ device.last_updated|date:"M j, Y, g:i a" }}</td>
+        </tr>
+    {% empty %}
+        <tr class="even">
+            <td colspan="3">
+                <p class="center">
+                    No Devices Found.  Please perform a <a href="{% url get_bulk_configs %}">Bulk Update</a>.
+                </p>
+            </td>
+        </tr>
+    {% endfor %}
 </table>
+
+<p class="actions">
+    <strong>Actions:</strong>&nbsp;
+    <a href="{% url new_device %}">+&nbsp;Add New Device</a>
+</p>
 
 {% endblock %}

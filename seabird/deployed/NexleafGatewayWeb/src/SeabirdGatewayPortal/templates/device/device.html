@@ -10,6 +10,9 @@
         <th>Device ID:</th><td>{{ device.device_id }}</td>
     </tr>
     <tr>
+        <th>Device Name:</th><td>{{ device.device_name }}</td>
+    </tr>
+    <tr>
         <th>XML Configuration:</th>
         <td>
             {% if device.config %}
@@ -39,5 +42,9 @@
     </tr>
 </table>
 
+<p class="actions">
+    <strong>Actions:</strong>&nbsp;
+    <a href="{% url edit_device device.device_id %}">Edit Device</a>
+</p>
 
 {% endblock %}

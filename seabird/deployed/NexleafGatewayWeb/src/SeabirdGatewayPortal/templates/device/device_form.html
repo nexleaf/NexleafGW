@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ page_title }}</h2>
+
+{% if edit %}
+    <form method="post" action="{% url edit_device device.device_id %}">
+{% else %}
+    <form method="post" action="{% url new_device %}">
+{% endif %}
+    {% csrf_token %}
+    <table class="form_table">
+        {% if edit %}
+        <tr>
+            <th>
+                <label>Device ID</label>
+            </th>
+            <td>
+                {{ device.device_id }}<br />
+                <span class="help_text">(Device ID only editable during Device creation.)</span>
+            </td>
+        </tr>
+        {% endif %}
+        {{ form.as_table }}
+        <tr>
+            <th></th>
+            <td>
+                {% if edit %}
+                    <input type="submit" value="Update Device" />
+                    &nbsp;or&nbsp;
+                    <a href="{% url show_device device.device_id %}">Cancel</a>
+                {% else %}
+                    <input type="submit" value="Create Device" />
+                    &nbsp;or&nbsp;
+                    <a href="{% url show_all_devices %}">Cancel</a>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    
+    </form>
+{% endblock %}

@@ -87,6 +87,18 @@ Download (todo)
 
 <hr />
 
+{% if messages %}
+    <div class="span-24 last">
+        {% for message in messages %}
+            <div class="message">
+                <div class="{{ message.tags }}">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% block header %}{% endblock %}
 
 <div class="span-24 last">

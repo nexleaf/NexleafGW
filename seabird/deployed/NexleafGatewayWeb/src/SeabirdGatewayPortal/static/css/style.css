@@ -20,6 +20,16 @@ table.config_table th.noborder {border:none;}
 .clear {clear:both;}
 
 
+/* Form Styles */
+.form_table {}
+.form_table th {text-align:right;vertical-align:top;width:120px;}
+.form_table td {text-align:left;vertical-align:top;}
+.form_table .errorlist {color:#f00;}
+.form_table .xml_textarea {width:700px;}
+.form_table input[readonly] {color:#7F7F7F;}
+.form_table .help_text {font-size:0.9em;}
+
+
 /* Releases page */
 .releases {}
 .releases h3 {margin-bottom:0.4em;}
