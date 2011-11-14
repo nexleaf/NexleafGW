@@ -2,9 +2,21 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block content %}
-<h2>{{ page_title }}</h2>
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">
+            {{ page_title }}<br />
+            <span class="breadcrumbs">
+                <a href="{% url show_all_configs %}">All Configurations</a>
+                &raquo;
+                View Config: {{ config.title }}
+            </span>
+        </h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
 
+{% block content %}
 <table class="config_table">
     <tr>
         <th>Title:</th>

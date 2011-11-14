@@ -2,9 +2,16 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block content %}
-<h2>{{ page_title }}</h2>
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">
+            {{ page_title }}
+        </h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
 
+{% block content %}
 <p>
     The Device and Configuration data below comes directly from the Main Sever via bulk updates.  To get the latest data, click the link below
     to perform a full update.

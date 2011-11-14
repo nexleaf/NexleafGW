@@ -20,7 +20,7 @@ def home(request):
     
     (status, output) = commands.getstatusoutput("uptime")
     t = loader.get_template('home.html')
-    c = RequestContext(request, {'yes': True, 'output': output})
+    c = RequestContext(request, {'yes': True, 'output': output, 'page_title':'Home'})
     return HttpResponse(t.render(c))
 
 

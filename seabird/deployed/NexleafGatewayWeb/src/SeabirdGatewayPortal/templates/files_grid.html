@@ -1,8 +1,16 @@
 {% extends "layout.html" %}
 
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">{{ page_title }}</h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
+
 {% block content %}
 
-<hr>
 Total files waiting for upload: {{ totalfiles }}
 <br>
 Total data size waiting for upload: {{ totaldata }}

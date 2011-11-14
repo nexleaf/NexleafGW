@@ -59,6 +59,10 @@ def view_rsync(request):
 
     
     t = loader.get_template('rsync.html')
-    c = RequestContext(request, {'incout': incout, 'totalfiles': len(sfiles)})
+    c = RequestContext(request, {
+        'incout': incout,
+        'totalfiles': len(sfiles),
+        'page_title':'Rsync Logs',
+    })
     return HttpResponse(t.render(c))
 

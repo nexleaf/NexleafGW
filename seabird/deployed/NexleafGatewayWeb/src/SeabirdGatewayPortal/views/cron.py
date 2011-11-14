@@ -25,18 +25,22 @@ log.setLevel(logging.DEBUG)
 
 @login_required
 def view_cron(request):
-
+    
     (status, output) = commands.getstatusoutput("crontab -l")
 
     if status == 0:
         default = output
     else:
         default = '# m h  dom mon dow   command\n*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null\n' + \
-        '0,30 * * * * wget http://localhost/seabird%s &> /dev/null\n' + \
-	'0,30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null' % reverse('get_bulk_configs')
+        '0,30 * * * * wget http://localhost/seabird%s &> /dev/null\n' % reverse('get_bulk_configs') + \
+	'0,30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null'
     
     t = loader.get_template('cron.html')
-    c = RequestContext(request, {'status': status, 'output': output, 'default': default})
+    c = RequestContext(request, {
+        'status': status,
+        'output': output,
+        'default': default,
+        'page_title':'Cron Status'})
     return HttpResponse(t.render(c))
 
 @login_required

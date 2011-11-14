@@ -113,7 +113,13 @@ def view_incoming_grid(request):
             alldata[fsta]['daydata'][datelookup[fdate]]['logs'] += 1
         
     t = loader.get_template('files_grid.html')
-    c = RequestContext(request, {'dates': alldates, 'devdata': alldata.values(), 'totalfiles': len(filelist), 'totaldata': totaldata})
+    c = RequestContext(request, {
+        'dates': alldates,
+        'devdata': alldata.values(),
+        'totalfiles': len(filelist),
+        'totaldata': totaldata,
+        'page_title':'In / Out Files'
+    })
     return HttpResponse(t.render(c))
 
 

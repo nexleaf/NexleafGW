@@ -2,6 +2,20 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">
+            Releases<br />
+            <span class="breadcrumbs">
+                <a href="{% url home %}">Home</a>
+                &raquo;
+                Releases
+            </span>
+        </h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
+
 {% block content %}
 <h2>{{ page_title }}</h2>
 

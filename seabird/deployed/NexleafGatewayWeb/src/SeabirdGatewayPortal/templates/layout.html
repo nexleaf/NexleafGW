@@ -47,46 +47,44 @@
     
     <!-- NAV -->
     <div class="nav_container">
-        <div class="span-3 nav_item">
+        <div class="span-3 nav_item {% active request '^/$|^/home/' %}">
             <a href="{% url home %}">Home</a>
         </div>
-
-        <div class="span-3 nav_item">
+        
+        <div class="span-3 nav_item {% active request '^/devices/' %}">
             <a href="{% url show_all_devices %}">Devices</a>
         </div>
-
-        <div class="span-3 nav_item">
+        
+        <div class="span-3 nav_item {% active request '^/configs/' %}">
             <a href="{% url show_all_configs %}">Configs</a>
         </div>
-
-
-        <div class="span-3 nav_item">
+        
+        <div class="span-3 nav_item {% active request '^/files/' %}">
             <a href="{% url view_incoming %}">In/Out Files</a>
         </div>
-
-        <div class="span-3 nav_item">
+        
+        <div class="span-3 nav_item {% active request '^/cron/' %}">
             <a href="{% url view_cron %}">Cron Status</a>
         </div>
-
-
-        <div class="span-3 nav_item">
+        
+        <div class="span-3 nav_item {% active request '^/rsync/' %}">
             <a href="{% url view_rsync %}">Rsync Logs</a>
         </div>
-
-
-        <div class="span-3 nav_item">
+        
+        {% if user.is_superuser %}
+            <div class="span-3 nav_item">
+                <a href="{% url admin:index %}">Admin</a>
+            </div>
+        {% endif %}
+        
+        <div class="span-3 nav_item  {% active request '^/accounts/' %}">
             {% if user.is_authenticated %}
                 <a href="{% url auth_logout %}">Logout</a>: {{ user.username }}
             {% else %}
                 <a href="{% url auth_login %}">Login</a>
             {% endif %}
         </div>
-
-
-        <div class="span-3 nav_item">
-            <a href="{% url admin:index %}">Admin</a>
-        </div>
-
+        
         <!--
         <div class="span-4 colborder">
         Download (todo)

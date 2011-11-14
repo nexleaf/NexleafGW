@@ -2,9 +2,27 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block content %}
-<h2>{{ page_title }}</h2>
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">
+            {{ page_title }}<br />
+            <span class="breadcrumbs">
+                <a href="{% url show_all_devices %}">All Devices</a>
+                &raquo;
+                {% if edit %}
+                    <a href="{% url show_device device.device_id %}">View Device: {{ device.device_id }}</a>
+                    &raquo;
+                    Edit Device
+                {% else %}
+                    Add New Device
+                {% endif %}
+            </span>
+        </h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
 
+{% block content %}
 {% if edit %}
     <form method="post" action="{% url edit_device device.device_id %}">
 {% else %}

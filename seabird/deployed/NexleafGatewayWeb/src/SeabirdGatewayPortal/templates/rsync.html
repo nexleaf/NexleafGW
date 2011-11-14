@@ -1,9 +1,16 @@
 {% extends "layout.html" %}
 
-{% block content %}
+{% block title %}{{ page_title }}{% endblock %}
 
-<br>
-Rsync & Other log files
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">{{ page_title }}</h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
+
+{% block content %}
+Rsync &amp; Other log files
 <br>
 <br>
 {% if incout.has_previous %}

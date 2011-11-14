@@ -2,9 +2,21 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block content %}
-<h2>{{ page_title }}</h2>
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">
+            {{ page_title }}<br />
+            <span class="breadcrumbs">
+                <a href="{% url show_all_devices %}">All Devices</a>
+                &raquo;
+                View Device: {{ device.device_id }}
+            </span>
+        </h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
 
+{% block content %}
 <table class="device_table">
     <tr>
         <th>Device ID:</th><td>{{ device.device_id }}</td>
