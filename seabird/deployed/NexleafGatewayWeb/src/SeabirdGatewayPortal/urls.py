@@ -61,8 +61,8 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
 # Account Management URLs
 ########################################
 urlpatterns += patterns('',
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='auth_login'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'login.html'}, name='auth_logout'),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'accounts/login.html'}, name='auth_login'),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name': 'accounts/logged_out.html'}, name='auth_logout'),
 )
 
 
