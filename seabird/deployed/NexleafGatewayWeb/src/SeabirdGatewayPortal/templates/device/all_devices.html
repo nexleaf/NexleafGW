@@ -35,7 +35,7 @@
     </tr>
     {% for device in devices %}
         <tr class="{% cycle 'even' 'odd' %}">
-            <td><a href="{% url show_device device.device_id %}">{{ device.device_id }}</a></td>
+            <td><a href="{% url show_device device.device_id %}">{{ device }}</a></td>
             <td><a href="{% url show_config device.config.id %}">{{ device.config }}</a></td>
             <td>{{ device.last_updated|date:"M j, Y, g:i a" }}</td>
         </tr>

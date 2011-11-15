@@ -44,11 +44,14 @@ def get_bulk_configs(request):
     for c in all_configs:
         # Extract device and config data from the xml.
         device_id = c.getAttribute('assignToDeviceId').strip()
+        device_name = c.getAttribute('assignToDeviceName').strip()
         config_title = c.getElementsByTagName('Name')[0].firstChild.data.strip()
         config_version = c.getElementsByTagName('Version')[0].firstChild.data.strip()
         
         # Remove the assignToDeviceId attribute before storing config.
         c.removeAttribute('assignToDeviceId')
+        c.removeAttribute('assignToDeviceName')
+        
         config_xml = c.toxml()
         
         try:

@@ -49,7 +49,7 @@ def show_device(request, device_id=None):
     return render_to_response('device/device.html', 
         {
             'device':device,
-            'page_title': 'View Device: %s' % device.device_id,
+            'page_title': 'View Device: %s' % device,
         }, context_instance=RequestContext(request))
 
 

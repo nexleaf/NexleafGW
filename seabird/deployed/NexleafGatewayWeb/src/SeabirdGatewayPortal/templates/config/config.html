@@ -35,7 +35,7 @@
         <td>
             {% for d in config.get_devices %}
                 <a href="{% url show_device d.device_id %}">
-                    {{ d.device_id }}
+                    {{ d }}
                 </a>{% if not forloop.last %},&nbsp;
                         {% if forloop.counter|divisibleby:"5" %}<br />{% endif %}
                     {% endif %}
