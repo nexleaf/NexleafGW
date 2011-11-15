@@ -12,7 +12,7 @@ div.gateway_header h3 {padding-left:10px;color:#555;}
 div.nexleaf_logo {float:right;}
 
 /* Navigation Styles */
-.nav_container {margin: 10px 0px 20px 0px;
+.nav_container {margin: 10px 0px 2px 0px;
     border: 1px solid #ddd;border-right: 2px solid #ddd;border-bottom: 2px solid #ddd;}
 .nav_item {font-size:1.4em;text-align:center;border-right:1px solid #ddd;margin-right:0;}
 .nav_item a {text-decoration:none;color:#2f638a;}

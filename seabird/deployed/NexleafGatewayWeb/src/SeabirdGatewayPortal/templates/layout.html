@@ -91,11 +91,20 @@
         </div>
         -->
         <div class="clear"></div>
-        
-        <div class="prepend-18 span-6 last">
-            <div class="nav_current_user">Logged in as: {{ user.username }}</div>
+    </div>
+    
+    
+    <div class="prepend-18 span-6 last">
+        <div class="nav_current_user">
+        {% if user.is_authenticated %}
+            Logged in as: {{ user.username }}
+        {% else %}
+            {# for spacing purposes #}
+            &nbsp; 
+        {% endif %}
         </div>
     </div>
+    
     <div class="clear"></div>
     
     {% if messages %}
