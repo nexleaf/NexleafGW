@@ -135,6 +135,7 @@ DEV_ENVIRONMENT = False
 # Could also be overriden in settings_local.py to be a hard coded IP Address of the main server, when necessary.
 MAIN_SERVER_URL = 'http://seabird.nexleaf.org/seabird/'
 BULK_CONFIGS_URL = os.path.join(MAIN_SERVER_URL, 'configuration/bulk/')
+CONFIG_FORWARD_AND_CACHE = True
 
 # Default Timeout is 8 seconds.  Can be reconfigured via settings_local as well.
 SOCKET_TIMEOUT = 8.0
