@@ -1,0 +1,20 @@
+{# Field for Rendering an arbitrary field in a common format. #}
+<div class="form_field{% if field.errors %} fielderror{% endif %}">
+    <span>
+        <label for="id_{{field.html_name}}">
+            {{field.label}}:{% if field.field.required %}<span class="required">*</span>{% endif %}
+        </label>
+    </span>
+    
+    <span class="{{field_class}}">
+        {{ field }}
+    </span>
+    
+    <div class="clear"></div>
+    
+    <div class="help_text">{{ field.help_text|safe }}</div>
+    
+    {% if field.errors %}
+        {{ field.errors }}
+    {% endif %}
+</div>

@@ -22,6 +22,10 @@ div.nexleaf_logo {float:right;}
 .active {background:#5997c6;}
 .active a {color:#fff;font-weight:bold;}
 
+/* Navigation - Active Tab */
+.nav_current_user {color:#777;font-size:12px;margin-top:2px;padding-right:10px;text-align:right;font-style:italic;}
+
+
 /* Breadcrumb Styles */
 .page_header {border-bottom:2px solid #ddd;}
 .breadcrumbs {font-size:12px;padding-left:4px;margin-bottom:6px;display:block;}
@@ -36,6 +40,22 @@ div.nexleaf_logo {float:right;}
 .form_table .xml_textarea {width:700px;}
 .form_table input[readonly] {color:#7F7F7F;}
 .form_table .help_text {font-size:0.9em;}
+
+/* NEW Form Styles */
+.form_field { float: left; margin: 2px; padding: 5px; }
+.form_field label { margin:0; padding:0; text-align: left; display: block;}
+.form_field input { margin:2px 0; padding:1px; width: 200px; font-size: 12px; }
+.form_field select { margin:2px 0; padding:1px; font-size: 12px; }
+.form_field .help_text { text-align: left; font-size: 11px; width: 100%; margin: 0; padding: 0; }
+
+.form_field .narrow input {width:100px;}
+
+.required {color:red;font-size:12px;vertical-align:top;}
+.fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
+
+
+
+
 
 /* Releases page */
 .releases {}
