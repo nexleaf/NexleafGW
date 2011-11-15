@@ -20,7 +20,7 @@ class Device(Document):
     }
     
     def __unicode__(self):
-        if len(self.device_name) is 0:
+        if not self.device_name:
             return '%s' % self.device_id
         else:
             return '%s - %s' % (self.device_id, self.device_name)
