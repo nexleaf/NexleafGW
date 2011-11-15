@@ -14,3 +14,15 @@ def active(request, pattern):
         return 'active'
     return ''
 
+
+@register.inclusion_tag('format/form_field.html', takes_context=True)
+def form_field(context, field, field_class=''):
+    '''
+        Simple inclusion tag for rendering customizable form fields.
+    '''
+    context = {
+        'field':field, 
+        'field_class': field_class,
+    }
+    return context
+
