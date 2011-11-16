@@ -55,7 +55,8 @@ div.nexleaf_logo {float:right;}
 .fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
 
 /* Config Form Styles */
-.recording_schedule_form {border: 1px solid #ddd;}
+.config_settings_form {border: 1px dashed #98bfdc;margin-bottom:20px;padding:10px;}
+.recording_form {border: 1px dashed #98bfdc;margin-bottom:8px;padding:10px;}
 
 .add_schedule_container {text-align:center;}
 .remove_schedule_container {padding:5px 10px;float:right;}

@@ -7,9 +7,9 @@ from django.forms.extras.widgets import SelectDateWidget
 from SeabirdGatewayPortal.Collections.Config import Config
 
 RADIO_UPLOAD_CHOICES = (
-    ("wifi", "wifi"),
     ("cell", "cell"),
     ("logger", "logger"),
+    ("wifi", "wifi"),
 )
 
 # Both of these combine to form a complete configuration.
@@ -37,7 +37,7 @@ class NewConfigForm(forms.Form):
 
 
 
-class RecordingScheduleForm(forms.Form):
+class RecordingForm(forms.Form):
     '''
         Form allows for multiple recording schedules to be specified
         for a given Configuration.  Used as part of a formset.

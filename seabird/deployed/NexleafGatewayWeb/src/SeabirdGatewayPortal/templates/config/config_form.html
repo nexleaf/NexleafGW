@@ -29,25 +29,32 @@
 {% else %}
     <form method="post" action="{% url new_config %}">
 {% endif %}
-    {% csrf_token %}
-    <table class="form_table">
-        {{ form.as_table }}
-        <tr>
-            <th></th>
-            <td>
-                {% if edit %}
-                    <input type="submit" value="Update Config" />
-                    &nbsp;or&nbsp;
-                    <a href="{% url show_config config.id %}">Cancel</a>
-                {% else %}
-                    <input type="submit" value="Create Config" />
-                    &nbsp;or&nbsp;
-                    <a href="{% url show_all_configs %}">Cancel</a>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
+        {% csrf_token %}
+        
+        {% if edit %}
+            {# So edit form still works while form changeover in progress. #}
+            {{ form.as_p }}
+        {% else %}
+            {% include 'config/include/_config_settings_form.html' %}
+            {% include 'config/include/_recording_schedule_form.html' %}
+        {% endif %}
+        
+    
+        <table class="form_table">
+            <tr>
+                <td colspan="2">
+                    {% if edit %}
+                        <input type="submit" value="Update Config" />
+                        &nbsp;or&nbsp;
+                        <a href="{% url show_config config.id %}">Cancel</a>
+                    {% else %}
+                        <input type="submit" value="Create Config" />
+                        &nbsp;or&nbsp;
+                        <a href="{% url show_all_configs %}">Cancel</a>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
     
     </form>
-    <hr>
 {% endblock %}
