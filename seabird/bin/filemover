@@ -1,12 +1,28 @@
 #!/bin/bash
 
 
-
 export RSYNC_PASSWORD=SETME
 #export PATH=$PATH:/opt/bin
 #export LD_LIBRARY_PATH=/opt/lib:$LD_LIBRARY_PATH
-source /var/www/seabird/conf/filemover.conf
+
+if [ -n $1 ]; then
+    if [ -f $1 ]; then
+	source $1
+    else
+	echo "Bad config file: $1" >> /var/www/seabird/log/rsync.log	
+	exit 1
+    fi
+else
+    echo "Please provide configuraiton file!" >> /var/www/seabird/log/rsync.log
+    exit 1
+fi
+
+
 alias ls=ls
+
+if [ -e /var/www/seabird/conf/filemover-pass.conf ]; then
+    source /var/www/seabird/conf/filemover-pass.conf
+fi
 
 RSOPTS="-q --timeout=45 --contimeout=45 --partial-dir=/var/www/seabird/tmp --delay-updates --temp-dir=/var/www/seabird/tmp --remove-source-files"
 
@@ -31,7 +47,10 @@ if [ -z $DSTID ]; then
     exit 1
 fi
 
-
+if [ -z $LOCKNAME ]; then
+    echo "No LOCKNAME!"
+    exit 1
+fi
 
 for fmd in $FILEMOVER_DIRS; do
 	if [ -z $fmd ]; then
@@ -42,8 +61,8 @@ done
 
 mkdir -p /var/lock
 LPID=""
-if [ -e /var/lock/fm ]; then
-    LPID=`cat /var/lock/fm`
+if [ -e /var/lock/fm_$LOCKNAME ]; then
+    LPID=`cat /var/lock/fm_$LOCKNAME`
     THEPROC=`echo $0 | sed -e 's/.*\///g'`
     ps -p $LPID | grep -q $THEPROC
     if [ $? -eq 0 ]; then
@@ -52,23 +71,28 @@ if [ -e /var/lock/fm ]; then
     fi
 fi
 
-echo $$ > /var/lock/fm
+echo $$ > /var/lock/fm_$LOCKNAME
 
 
 
 for THEDIR in $FILEMOVER_DIRS; do
 
-THEFILES=`ls -r $THEDIR`
+#THEFILES=`ls -r $THEDIR`
+THEFILES=`find $THEDIR`
 
 for FILE in $THEFILES; do
 
-    FILESIZE=`stat -c "%s" $THEDIR/$FILE`
+    if [ -d $FILE ]; then
+	continue
+    fi
+
+    FILESIZE=`stat -c "%s" $FILE`
     STARTTIME=`date +%s`
-    RS_CMD=`rsync $RSOPTS $THEDIR/$FILE rsync://$USER@$NEXT_HOP/seabirdin/$THEDIR/ &> /dev/null`
+    RS_CMD=`rsync $RSOPTS $FILE rsync://$USER@$NEXT_HOP/seabirdin/$FILE &> /dev/null`
     if [ $? -ne 0 ]; then
     	if [ -e /var/www/seabird/log/ ]; then
 		LOGDATE=`date +"%Y%m%d_%H%M%S"`
-		echo "FILEMOVER_ERR $LOGDATE $THEDIR/$FILE $DSTID $SRCID - $? - $RS_CMD" >> /var/www/seabird/log/rsync.log
+		echo "FILEMOVER_ERR $LOGDATE $FILE $DSTID $SRCID - $? - $RS_CMD" >> /var/www/seabird/log/rsync.log
 	fi
 	continue
     fi
@@ -82,7 +106,7 @@ for FILE in $THEFILES; do
 
     if [ -e /var/www/seabird/log/ ]; then
 	LOGDATE=`date +"%Y%m%d_%H%M%S"`
-	echo "FILEMOVER_OK $LOGDATE $THEDIR/$FILE $DSTID $SRCID $TTIME 0 $BANDW $FILESIZE" >> /var/www/seabird/log/rsync.log
+	echo "FILEMOVER_OK $LOGDATE $FILE $DSTID $SRCID $TTIME 0 $BANDW $FILESIZE" >> /var/www/seabird/log/rsync.log
     fi
 
 done

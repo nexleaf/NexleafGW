@@ -1,4 +1,5 @@
 # m h  dom mon dow   command
-*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null
-*/30 * * * * wget http://localhost/seabird/api/configuration/bulk/get/ &> /dev/null
+*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-logs.conf &> /dev/null
+*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-data.conf &> /dev/null
+*/30 * * * * wget -O /dev/null http://localhost/seabird/api/configuration/bulk/get/ &> /dev/null
 #30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null

@@ -31,9 +31,11 @@ def view_cron(request):
     if status == 0:
         default = output
     else:
-        default = '# m h  dom mon dow   command\n*/5 * * * * /var/www/seabird/bin/filemover &> /dev/null\n' + \
-        '0,30 * * * * wget http://localhost/seabird%s &> /dev/null\n' % reverse('get_bulk_configs') + \
-	'0,30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null'
+        default = '# m h  dom mon dow   command\n' + \
+            '*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-logs.conf &> /dev/null\n' + \
+            '*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-data.conf &> /dev/null\n' + \
+            '0,30 * * * * wget -O /dev/null http://localhost/seabird%s &> /dev/null\n' % reverse('get_bulk_configs') + \
+            '0,30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null'
     
     t = loader.get_template('cron.html')
     c = RequestContext(request, {

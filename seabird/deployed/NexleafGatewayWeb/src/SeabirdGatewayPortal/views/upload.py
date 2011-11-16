@@ -1,5 +1,6 @@
 import sys
 import json
+import pytz
 import logging
 
 from datetime import datetime
@@ -75,8 +76,20 @@ def upload_data(request):
 
             device_id = request.POST['device_id']
             deployment_id = request.POST['deployment_id']
-            record_datetime = datetime.fromtimestamp(float(request.POST['record_datetime'])/1000.0)
+            record_datetime = datetime.fromtimestamp(float(request.POST['record_datetime'])/1000.0, pytz.utc)
             datetime_str = record_datetime.strftime("%Y%m%d_%H%M%S")
+
+            # create the directory structure
+            datadir = os.path.normpath(settings.INCOMING_DIR)
+            if request.POST['data_type'] == "log":
+                datadir += "/logs"
+            else:
+                datadir += "/data"
+            datadir += record_datetime.strftime("/%Y/%m/%d/")
+            try:
+                os.makedirs(datadir)
+            except:
+                pass
 
             # create the filename 
             zipfilename = deployment_id + "_" + device_id + "_" + datetime_str + ".zip"
@@ -102,11 +115,17 @@ def upload_data(request):
             #saved_path = os.getcwd()
 
             os.chdir(workdir_data)
-
+            
+            log.info('zip -r -%d %s data.raw args.json' % (settings.ZIP_COMPRESS, zipfilename))
             (status, output) = commands.getstatusoutput('zip -r -%d %s data.raw args.json' % (settings.ZIP_COMPRESS, zipfilename))
 
-            shutil.move(zipfilename, settings.INCOMING_DIR)
-
+            #shutil.move(zipfilename, settings.INCOMING_DIR)
+            try:
+                shutil.move(zipfilename, datadir)
+            except Exception as e:
+                log.error("Error trying to move %s to %s, zipstat: %s, zipout: %s" % (zipfilename, datadir, status, output))
+                raise e
+            
             os.chdir("/var/www/seabird/work")
 
             (status, output) = commands.getstatusoutput('rm -rf %s' % (workdir_data))
