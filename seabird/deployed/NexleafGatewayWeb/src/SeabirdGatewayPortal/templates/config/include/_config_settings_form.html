@@ -1,0 +1,22 @@
+<h3 class="form_section_header">Configuration Settings</h3>
+<p>Use the form below to specify the settings for this Configuration.  A unique Version Number will be automatically assigned when your configuration is submitted.</p>
+
+<div class="config_settings_form">
+    
+    {% form_field config_form.name %}
+    <div class="clear"></div>
+    {% form_field config_form.deployment_id %}
+    {% form_field config_form.station_id %}
+    <div class="clear"></div>
+    
+    {% form_field config_form.upload_url %}
+    {% form_field config_form.upload_interval %}
+    {% form_field config_form.radio_upload_mode %}
+    <div class="clear"></div>
+    
+    {% form_field config_form.logcat_to_db_flush_interval %}
+    {% form_field config_form.log_db_to_file_flush_cycle %}
+    {% form_field config_form.reboot_time %}
+    <div class="clear"></div>
+    
+</div>

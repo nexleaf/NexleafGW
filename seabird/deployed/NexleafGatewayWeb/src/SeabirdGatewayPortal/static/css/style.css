@@ -42,18 +42,23 @@ div.nexleaf_logo {float:right;}
 .form_table .help_text {font-size:0.9em;}
 
 /* NEW Form Styles */
+.form_section_header {margin-bottom:5px;padding-bottom:2px;border-bottom:1px solid #ddd;}
 .form_field { float: left; margin: 2px; padding: 5px; }
 .form_field label { margin:0; padding:0; text-align: left; display: block;}
 .form_field input { margin:2px 0; padding:1px; width: 200px; font-size: 12px; }
 .form_field select { margin:2px 0; padding:1px; font-size: 12px; }
 .form_field .help_text { text-align: left; font-size: 11px; width: 100%; margin: 0; padding: 0; }
 
-.form_field .narrow input {width:100px;}
+.form_field .short_field input {width:150px;}
 
 .required {color:red;font-size:12px;vertical-align:top;}
 .fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
 
+/* Config Form Styles */
+.recording_schedule_form {border: 1px solid #ddd;}
 
+.add_schedule_container {text-align:center;}
+.remove_schedule_container {padding:5px 10px;float:right;}
 
 
 

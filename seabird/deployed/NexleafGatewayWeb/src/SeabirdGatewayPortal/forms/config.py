@@ -1,8 +1,92 @@
+import datetime
 from xml.dom import minidom
 
 from django import forms
+from django.forms.extras.widgets import SelectDateWidget
 
 from SeabirdGatewayPortal.Collections.Config import Config
+
+RADIO_UPLOAD_CHOICES = (
+    ("wifi", "wifi"),
+    ("cell", "cell"),
+    ("logger", "logger"),
+)
+
+# Both of these combine to form a complete configuration.
+class NewConfigForm(forms.Form):
+    # Version and Date are computed automatically while saving configuration.
+    name = forms.CharField(label='Config Name')
+    
+    # Settings:
+    deployment_id = forms.CharField(label='Deployment ID')
+    station_id = forms.CharField(label='Station ID')
+    
+    upload_url = forms.URLField(label='Upload URL', help_text="Must begin with: http://")
+    
+    radio_upload_mode = forms.ChoiceField(label='Radio Upload Mode', choices=RADIO_UPLOAD_CHOICES)
+    upload_interval = forms.IntegerField(required=True, min_value=0,
+        label="Upload Interval", help_text="In Minutes")
+    
+    logcat_to_db_flush_interval = forms.IntegerField(required=True, min_value=0,
+        label="Logcat To Db Flush Interval", help_text="In Minutes")
+    log_db_to_file_flush_cycle = forms.IntegerField(required=True, min_value=0,
+        label="Log Db To File Flush Cycle", help_text="In Minutes")
+    
+    reboot_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
+        label='Reboot Time', help_text="HH:MM using a 24hr clock.")
+
+
+
+class RecordingScheduleForm(forms.Form):
+    '''
+        Form allows for multiple recording schedules to be specified
+        for a given Configuration.  Used as part of a formset.
+    '''
+    # Start and end dates of the config (end date is the expiration date essentially).
+    start_date = forms.DateField(widget=SelectDateWidget, required=True, label='Schedule Start Date')
+    end_date = forms.DateField(widget=SelectDateWidget, required=True, label='Schedule End Date')
+    
+    # Daily start and stop times for recording.
+    start_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
+        label='Daily Start Time', help_text="HH:MM using a 24hr clock.")
+    end_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
+        label='Daily End Time', help_text="HH:MM using a 24hr clock.")
+    
+    # Interval and sampling length of recordings.
+    # Duration automatically calculated from start / stop time.
+    interval_min = forms.IntegerField(required=True, min_value=0, label="Interval", help_text="In Minutes")
+    sampling_length_min = forms.IntegerField(required=True, min_value=0, label="Sampling Length", help_text="In Minutes")
+        
+    def clean(self):
+        start_date = self.cleaned_data.get('start_date')
+        end_date = self.cleaned_data.get('end_date')
+        
+        start_time = self.cleaned_data.get('start_time')
+        end_time = self.cleaned_data.get('end_time')
+        
+        if start_date and end_date:
+            # Make sure end date is after start date.
+            if start_date > end_date:
+                raise forms.ValidationError("Start date must be before or equal to end date.")
+        
+        if start_time and end_time:
+            
+            # Make sure start time is before end time.  No midnight crossing allowed!
+            if start_time >= end_time:
+                raise forms.ValidationError("Start time must be before end time.")
+            
+            # Calculate duration in minutes (difference between start and end times).
+            # Convert into datetime and then subtract to get a timedelta object.
+            temp_date = datetime.date(2010,1,1)
+            time_diff = datetime.datetime.combine(temp_date, end_time) - \
+                datetime.datetime.combine(temp_date, start_time)
+            
+            # Throw away the seconds remainder (integer math) as we don't care about them (minutes is highest resolution).
+            self.cleaned_data['duration_min'] = time_diff.seconds / 60
+        
+        return self.cleaned_data
+
+
 
 class ConfigForm(forms.Form):
     title = forms.CharField(label='Title')

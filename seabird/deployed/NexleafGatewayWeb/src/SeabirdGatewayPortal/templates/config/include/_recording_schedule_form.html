@@ -1,0 +1,31 @@
+<h3 class="form_section_header">Recording Schedule(s)</h3>
+<p>Use the form below to add recording schedules to your Configuration.  If you don't want to include any, simply leave this section blank.</p>
+
+{% if recording_form.non_field_errors %}
+    <ul class="error">
+        {{recording_form.non_field_errors}}
+    </ul>
+{% endif %}
+
+<div class="recording_schedule_form">
+    <div class="remove_schedule_container {# {% if forloop.first %} hide{% endif %} #}">
+        <a href="javascript:void(0);" class="remove_schedule">Remove</a>
+    </div>
+    
+    {% form_field recording_form.start_date %}
+    {% form_field recording_form.end_date %}
+    <div class="clear"></div>
+    
+    {% form_field recording_form.start_time %}
+    {% form_field recording_form.end_time %}
+    <div class="clear"></div>
+    
+    {% form_field recording_form.interval_min %}
+    {% form_field recording_form.sampling_length_min %}
+    <div class="clear"></div>
+    
+</div>
+
+<div class="add_schedule_container">
+    <a href="javascript:void(0);" class="add_schedule">Add Schedule</a>
+</div>
