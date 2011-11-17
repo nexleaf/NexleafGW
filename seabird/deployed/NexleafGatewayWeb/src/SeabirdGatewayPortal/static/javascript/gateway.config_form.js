@@ -4,9 +4,6 @@ $(document).ready(function() {
     $('.add_recording').live('click', function(e) {
         e.preventDefault();
         add_formset('div.recording_container:last', 'recordingform');
-        
-        // Update recording counts displayed to the user.
-        recording_count_updater();
     });
     
     // Remove recording form dynamically
@@ -17,8 +14,6 @@ $(document).ready(function() {
         var container = $(this).closest('div.recording_container');
         remove_formset(container);
         
-        // Update recording counts displayed to the user.
-        recording_count_updater();
     });
     
     // Display Only - updates the numbers on the various recording schedules
@@ -43,7 +38,10 @@ $(document).ready(function() {
         // Make sure new element not "hidden" if it was cloned from a previously "removed" element.
         elements.newElement.show();
         
-        // TODO: Make sure new element not "deleted" if it was cloned from a deleted element.
+        // New element not "deleted" if it was cloned from a deleted element because all inputs cleared during cloning.
+        
+        // Update recording counts displayed to the user.
+        recording_count_updater();
         
         return elements;
     }
@@ -59,7 +57,10 @@ $(document).ready(function() {
         container.find('input[id$=-DELETE]').val('on');
         
         // Hide form - will still be used for cloning purposes.
-        container.hide();
+        container.hide(600, function() {
+            // Update recording counts displayed to the user once recording form fully hidden
+            recording_count_updater();
+        });
         
         // TOTAL doesn't get updated because the form still exists (it's just hidden and "deleted".)
     }

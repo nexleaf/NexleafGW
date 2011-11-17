@@ -1,7 +1,69 @@
 from datetime import datetime, date, timedelta
+from random import randint
 from xml.dom import minidom
 
-from mongoengine import Document, DateTimeField, StringField, URLField
+from mongoengine import Document, DateTimeField, DictField,\
+    IntField, ListField, SortedListField, StringField, URLField
+
+# As you are creating this collection, make a list of questions to ask Martin.
+class NewConfig(Document):
+    name = StringField(required=True)
+    version = StringField(unique=True, required=True)
+    
+    # Settings
+    deployment_id = StringField(required=True)
+    station_id = StringField(required=True)
+    upload_url = URLField(verify_exists=False, required=True)
+    
+    # Choices: cell, logger, wifi
+    radio_upload_mode = StringField(required=True)
+    
+    # All using minutes.
+    upload_interval = IntField(required=True)
+    logcat_to_db_flush_interval = IntField(required=True)
+    log_db_to_file_flush_cycle = IntField(required=True)
+    
+    # Mongo only supports DateTime fields.  Using a dummy date (01/01/2011) and an actual time.
+    reboot_time = DateTimeField(required=True)
+    # TODO: create a property to easily extract a time object from reboot time?
+    
+    recording_schedules = SortedListField(DictField(), required=False)
+    # DICT Includes:
+    # -- start_date
+    # -- end_date
+    # -- start_time
+    # -- end_time
+    # -- duration_min (computed from start / end times)
+    # -- interval_min
+    # -- sampling_length_min
+        
+    # Also the "Config Date" in the XML.
+    created_date = DateTimeField(required=True)
+    
+    # TODO: Make an XML property for displaying the xml.
+    
+    def __unicode__(self):
+        return '%s' % self.name
+    
+    def save(self):
+        if not self.id:
+            now = datetime.now()
+            self.created_date = now
+            
+            # Create a unique version number using the "now" time.
+            # Micro Seconds + Random Number should ensure uniqueness
+            # (in case datetime is caching somehow)
+            self.version = '%i%i%i%i%i%i%i%i' % \
+                (now.year, now.month, now.day,
+                 now.hour, now.minute, now.second,
+                 now.microsecond, randint(1000, 9999))
+            
+            # TODO: Ensure uniqueness by performing a query?
+        
+        # Save object.
+        super(NewConfig, self).save()
+    
+
 
 class Config(Document):
     title = StringField(required=True)
