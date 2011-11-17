@@ -34,7 +34,6 @@ class NewConfigForm(forms.Form):
     
     reboot_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
         label='Reboot Time', help_text="HH:MM using a 24hr clock.")
-    
 
 
 class RecordingForm(forms.Form):
@@ -69,7 +68,8 @@ class RecordingForm(forms.Form):
             if start_date > end_date:
                 raise forms.ValidationError("Start date must be before or equal to end date.")
         
-        if start_time and end_time:
+        # If start time is 00:00:00 just an "if start_time" check would fail.  Be explicit!
+        if start_time != '' and end_time != '':
             
             # Make sure start time is before end time.  No midnight crossing allowed!
             if start_time >= end_time:

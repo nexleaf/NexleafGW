@@ -65,16 +65,11 @@ def new_config(request):
                 # -- Deleted "blank" formsets are "valid" but don't have cleaned_data
                 # -- So just ignore them when inserting data into mongo.
                 if hasattr(recording_form, 'cleaned_data'):
-                    
                     # Get value of DELETE from form (and remove it from the dict so it isn't stored)
                     delete_form = recording_form.cleaned_data.pop('DELETE', '')
                     if not delete_form:
-                        # TODO: CANT Store datetime or time in mongo dict! (fails to encode!).
-                        # Datetime not BSON compatible! Figure out a work around.
-                        recording_form.cleaned_data.pop('end_date')
-                        recording_form.cleaned_data.pop('start_date')
                         recording_list.append(recording_form.cleaned_data)
-            # new_config.recording_schedules = recording_list
+            new_config.recording_schedules = recording_list
             new_config.save()
             
             messages.success(request, 'You have successfully created the \

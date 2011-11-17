@@ -1,9 +1,13 @@
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time
 from random import randint
 from xml.dom import minidom
 
 from mongoengine import Document, DateTimeField, DictField,\
     IntField, ListField, SortedListField, StringField, URLField
+
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATE_FORMAT = '%Y-%m-%d'
+TIME_FORMAT = '%H:%M:%S'
 
 # As you are creating this collection, make a list of questions to ask Martin.
 class NewConfig(Document):
@@ -44,8 +48,8 @@ class NewConfig(Document):
         else:
             raise TypeError('Invalid object type assigned to Reboot Time - requires Time Object')
     
-    recording_schedules = SortedListField(DictField(), required=False)
-    # DICT Includes:
+    
+    # Each Recording Schedule DICT Includes:
     # -- start_date (Can't be stored as "Date" object - not BSON Compatible)
     # -- end_date "SAME"
     # -- start_time "SAME (Time object)"
@@ -53,7 +57,57 @@ class NewConfig(Document):
     # -- duration_min (computed from start / end times)
     # -- interval_min
     # -- sampling_length_min
+    
+    # Also uses property so that python objects can be manually encoded and decoded
+    # -- DateTime and Time objects aren't BSON Compatible, so can't be easily stored as DictField.
+    _recording_schedules = SortedListField(DictField(), required=False)
+    
+    @property
+    def recording_schedules(self):
+        '''GET Method for _recording_schedules.'''
+        recording_list = []
+        for recording_dict in self._recording_schedules:
+            # Convert Date and Time objects string representation back into objects
+            # Cast to string before attempting conversion as strptime gets confused about object, it seems (errors).
+            recording_dict['start_date'] = datetime.strptime(str(recording_dict['start_date']), DATE_FORMAT).date()
+            recording_dict['end_date'] = datetime.strptime(str(recording_dict['end_date']), DATE_FORMAT).date()
+            
+            recording_dict['start_time'] = datetime.strptime(str(recording_dict['start_time']), TIME_FORMAT).time()
+            recording_dict['end_time'] = datetime.strptime(str(recording_dict['end_time']), TIME_FORMAT).time()
+            recording_list.append(recording_dict)
         
+        return recording_list
+    
+    
+    @recording_schedules.setter
+    def recording_schedules(self, value):
+        '''
+            SET Method for recording_schedules
+            -- converts DateTime and Time objects into items that can be readily stored.
+            -- takes inputs of a list of dicts OR just a dict (which is appended to existing list).
+        '''
+        def convert_dict(in_dict):
+            # Convert all dates and times into string representations for easy mongo storage.
+            for k, v in in_dict.iteritems():
+                if isinstance(v, date):
+                    in_dict[k] = date.strftime(v, DATE_FORMAT)
+                elif isinstance(v, time):
+                    in_dict[k] = time.strftime(v, TIME_FORMAT)
+            return in_dict
+        
+        if isinstance(value, list):
+            for recording_dict in value:
+                recording_dict = convert_dict(recording_dict)
+            self._recording_schedules = value
+        elif isinstance(value, dict):
+            # Allow user to "append" a dict by assigning it to recording_schedules instead of
+            # assigning a list.
+            value = convert_dict(value)
+            self._recording_schedules.append(value)
+        else:
+            raise TypeError('Invalid object type assigned to Recording Schedules - Must be List or Dict')
+        
+    
     
     # Also the "Config Date" in the XML.
     created_date = DateTimeField(required=True)
