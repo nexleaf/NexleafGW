@@ -11,12 +11,14 @@
 
 {% block content %}
 
-Total files waiting for upload: {{ totalfiles }}
+Total audio waiting for upload: {{ totaldata }}
 <br>
-Total data size waiting for upload: {{ totaldata }}
+Total logs waiting for upload: {{ totallogs }}
+<br>
+Total disk usage: {{ diskusage }}
 <br>
 <hr>
-Table shows "number of audio files" / "number of log files"
+Table shows "number of audio files" / "number of log files" ... divide audio files by 4 to get minutes
 <br>
 
 <table border=1>
@@ -26,11 +28,15 @@ Table shows "number of audio files" / "number of log files"
 <td>{{ d }}</td>
 {% endfor %}
 </tr>
-{% for dev in devdata %}
+{% for rec in allfiles %}
 <tr>
-<td><a href="http://seabird.nexleaf.org/seabird/devices/{{ dev.sta }}/show">{{ dev.sta }}</a></td>
-{% for dd in dev.daydata %}
-<td>{{ dd.audio }} / {{ dd.logs }}</td>
+<td>{{ rec.staprn }}</td>
+{% for dd in rec.counts %}
+{% if not dd.data and not dd.logs %}
+<td>0 / 0</td>
+{% else %}
+<td><a href="{% url view_device_day rec.sta dd.date %}">{{ dd.data }} / {{ dd.logs }}</a></td>
+{% endif %}
 {% endfor %}
 </tr>
 {% endfor %}
