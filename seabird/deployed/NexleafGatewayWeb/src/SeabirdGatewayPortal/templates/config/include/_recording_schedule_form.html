@@ -1,6 +1,8 @@
 <h3 class="form_section_header">Recording Schedule(s)</h3>
 <p>Use the form below to add recording schedules to your Configuration.  If you don't want to include any recording schedules in this configuration, simply leave this section blank.</p>
 
+<p>To add additional recordings use the "Add Recording Schedule" link below.  To remove any recording, simply click the "X" in the upper right corner and the recording will be deleted when you submit the changes.</p>
+
 {% if recording_formset.non_form_errors %}
     <ul class="error">
         {{ recording_formset.non_form_errors }}
@@ -21,6 +23,10 @@
             Recording #<span class="recording_number">{{ forloop.counter }}</span>:
         </h4>
         
+        <div class="remove_recording_container{% if forloop.first %} hide{% endif %}">
+            <a href="javascript:void(0);" class="remove_recording remove_form"><span></span></a>
+        </div>
+        
         {% form_field recording_form.start_date %}
         {% form_field recording_form.end_date %}
         <div class="clear"></div>
@@ -35,18 +41,13 @@
         
         {# Hidden field for allowing deletion of recording schedules #}
         <input type="hidden" id="id_{{ recording_form.DELETE.html_name }}" name="{{ recording_form.DELETE.html_name }}" value="">
-        
-        <div class="remove_recording_container{% if forloop.first %} hide{% endif %}">
-            <a href="javascript:void(0);" class="remove_recording">-&nbsp;REMOVE&nbsp;-</a>
-        </div>
-        
     </div>
 {% endfor %}
 
 <div class="clear"></div>
 
 <div class="add_recording_container">
-    <a href="javascript:void(0);" class="add_recording">+&nbsp;Add Recording Schedule&nbsp;+</a>
+    <a href="javascript:void(0);" class="add_recording add_form"><span></span>&nbsp;Add Recording Schedule</a>
 </div>
 
 <div class="clear"></div>
