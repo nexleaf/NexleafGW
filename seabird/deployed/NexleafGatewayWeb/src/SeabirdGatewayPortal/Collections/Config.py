@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, time, timedelta
 from random import randint
 from xml.dom import minidom
 
@@ -22,10 +22,27 @@ class NewConfig(Document):
     upload_interval = IntField(required=True)
     logcat_to_db_flush_interval = IntField(required=True)
     log_db_to_file_flush_cycle = IntField(required=True)
+        
+    # Mongo Field Stored as DateTime Field (the only one it supports).  
+    # Property allows us to interact with it like a python "Time" object.
+    _reboot_time = DateTimeField(required=True)
     
-    # Mongo only supports DateTime fields.  Using a dummy date (01/01/2011) and an actual time.
-    reboot_time = DateTimeField(required=True)
-    # TODO: create a property to easily extract a time object from reboot time?
+    @property
+    def reboot_time(self):
+        '''GET Method for reboot_time property.'''
+        return self._reboot_time.time()
+    
+    @reboot_time.setter
+    def reboot_time(self, value):
+        '''
+            SET Method for reboot_time property.
+            -- Assigned value should ALWAYS be a Time object.
+        '''
+        if isinstance(value, time):
+            # Use a dummy date so it can be stored as a DateTime in Mongo.
+            self._reboot_time = datetime.combine(date(2011,1,1), value)
+        else:
+            raise TypeError('Invalid object type assigned to Reboot Time - requires Time Object')
     
     recording_schedules = SortedListField(DictField(), required=False)
     # DICT Includes:
@@ -37,6 +54,7 @@ class NewConfig(Document):
     # -- interval_min
     # -- sampling_length_min
         
+    
     # Also the "Config Date" in the XML.
     created_date = DateTimeField(required=True)
     

@@ -35,17 +35,6 @@ class NewConfigForm(forms.Form):
     reboot_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
         label='Reboot Time', help_text="HH:MM using a 24hr clock.")
     
-    def clean_reboot_time(self):
-        # Convert cleaned Reboot time into a DateTime for use with Mongo DateTime field.
-        # Use dummy date.
-        reboot_time = self.cleaned_data.get('reboot_time', '')
-        if isinstance(reboot_time, time):
-            temp_date = date(2011,1,1)
-            self.cleaned_data['reboot_time'] = datetime.combine(temp_date, reboot_time)
-            reboot_time = self.cleaned_data['reboot_time']
-        
-        return reboot_time
-
 
 
 class RecordingForm(forms.Form):
