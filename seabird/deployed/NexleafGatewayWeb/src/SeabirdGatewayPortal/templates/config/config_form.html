@@ -2,6 +2,10 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
+{% block header_includes %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/gateway.config_form.js"></script>
+{% endblock %}
+
 {% block header %}
     <div class="span-24 last">
         <h2 class="page_header">

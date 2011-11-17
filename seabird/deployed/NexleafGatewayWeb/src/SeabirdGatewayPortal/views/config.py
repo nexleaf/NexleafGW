@@ -53,7 +53,7 @@ def new_config(request):
     
     if request.method == 'POST':
         config_form = NewConfigForm(request.POST)
-        recording_formset = RecordingFormSet(request.POST)
+        recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
         if config_form.is_valid() and recording_formset.is_valid():
             # TODO: Save New Config.
             messages.success(request, 'You have successfully \
@@ -68,7 +68,7 @@ def new_config(request):
             messages.error(request, FORM_ERROR_MSG)
     else:
         config_form = NewConfigForm()
-        recording_formset = RecordingFormSet()
+        recording_formset = RecordingFormSet(prefix='recordingform')
     
     return render_to_response('config/config_form.html', 
         {

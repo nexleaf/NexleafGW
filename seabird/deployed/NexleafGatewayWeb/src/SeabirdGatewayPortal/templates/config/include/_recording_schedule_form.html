@@ -16,10 +16,10 @@
         </ul>
     {% endif %}
     
-    <div class="recording_form">
-        <div class="remove_schedule_container {% if forloop.first %} hide{% endif %}">
-            <a href="javascript:void(0);" class="remove_schedule">Remove</a>
-        </div>
+    <div class="recording_container">
+        <h4 class="form_subsection_header">
+            Recording #<span class="recording_number">{{ forloop.counter }}</span>:
+        </h4>
         
         {% form_field recording_form.start_date %}
         {% form_field recording_form.end_date %}
@@ -33,11 +33,20 @@
         {% form_field recording_form.sampling_length_min %}
         <div class="clear"></div>
         
+        {# Hidden field for allowing deletion of recording schedules #}
+        <input type="hidden" id="id_{{ recording_form.DELETE.html_name }}" name="{{ recording_form.DELETE.html_name }}" value="">
+        
+        <div class="remove_recording_container{% if forloop.first %} hide{% endif %}">
+            <a href="javascript:void(0);" class="remove_recording">-&nbsp;REMOVE&nbsp;-</a>
+        </div>
+        
     </div>
 {% endfor %}
 
-<div class="add_schedule_container">
-    <a href="javascript:void(0);" class="add_schedule">Add Recording Schedule</a>
+<div class="clear"></div>
+
+<div class="add_recording_container">
+    <a href="javascript:void(0);" class="add_recording">+&nbsp;Add Recording Schedule&nbsp;+</a>
 </div>
 
 <div class="clear"></div>

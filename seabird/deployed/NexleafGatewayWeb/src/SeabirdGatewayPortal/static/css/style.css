@@ -42,7 +42,8 @@ div.nexleaf_logo {float:right;}
 .form_table .help_text {font-size:0.9em;}
 
 /* NEW Form Styles */
-.form_section_header {margin-bottom:5px;padding-bottom:2px;border-bottom:1px solid #ddd;}
+.form_section_header {margin-bottom:5px;padding:0px 0px 2px 0px;border-bottom:1px solid #ddd;}
+.form_subsection_header {margin-bottom:5px;padding:5px 5px 2px 5px;border-bottom:1px solid #ddd;}
 .form_field { float: left; margin: 2px; padding: 5px; }
 .form_field label { margin:0; padding:0; text-align: left; display: block;}
 .form_field input { margin:2px 0; padding:1px; width: 200px; font-size: 12px; }
@@ -55,11 +56,17 @@ div.nexleaf_logo {float:right;}
 .fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
 
 /* Config Form Styles */
-.config_settings_form {border: 1px dashed #98bfdc;margin-bottom:20px;padding:10px;}
-.recording_form {border: 1px dashed #98bfdc;margin-bottom:8px;padding:10px;}
+.config_settings_container {border: 1px dashed #98bfdc;margin-bottom:20px;padding:5px;}
+.recording_container {display:inline;float:left;margin:0 6px 6px 0px;padding:5px;border: 1px dashed #98bfdc;}
 
-.add_schedule_container {text-align:center;}
-.remove_schedule_container {padding:5px 10px;float:right;}
+.add_recording_container {text-align:center;}
+.remove_recording_container {padding:0px;text-align:center;}
+
+a.add_recording {text-decoration:none;}
+a.add_recording:hover {text-decoration:underline;}
+a.remove_recording {text-decoration:none;}
+a.remove_recording:hover {text-decoration:underline;}
+
 
 
 
