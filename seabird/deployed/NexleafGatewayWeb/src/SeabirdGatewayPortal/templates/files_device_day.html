@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block header %}
+    <div class="span-24 last">
+        <h2 class="page_header">{{ page_title }}</h2>
+    </div>
+    <div class="clear"></div>
+{% endblock %}
+
+{% block content %}
+
+
+<table border=1>
+<tr>
+<td style="vertical-align: top;">
+
+DATA:
+<table>
+<tr>
+<td>Date</td>
+<td>Mins</td>
+<td>On Gateway</td>
+</tr>
+{% for d in alldata %}
+<tr>
+<td>{{ d.date }}</td>
+<td>{{ d.mins }}</td>
+<td>{{ d.created }} </td>
+</tr>
+{% endfor %}
+</table>
+
+</td>
+
+<td style="background: #DDFFDD; width: 1px">
+&nbsp;
+</td>
+
+<td style="vertical-align: top;">
+LOGS:
+<table>
+<tr>
+<td>Date</td>
+<td>Size</td>
+<td>On Gateway</td>
+</tr>
+{% for d in alllogs %}
+<tr>
+<td><a href='{% url get_record_log dev.device_id d.date|date:"YmdHis" %}'>{{ d.date|date:"Y-m-d H:i:s"  }}</a></td>
+<td>{{ d.size }}</td>
+<td>{{ d.created }} </td>
+</tr>
+{% endfor %}
+</table>
+
+</td>
+</table>
+
+
+{% endblock %}
+

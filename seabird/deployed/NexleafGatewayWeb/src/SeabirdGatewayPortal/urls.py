@@ -15,8 +15,11 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
     url(r'^$', 'home.home', name='home'),
     url(r'^home/releases/$', 'home.releases', name='releases'),
     url(r'^upload/$', 'upload.upload_data', name='upload_data'),
+
     url(r'^files/$', 'files.view_incoming_grid', name='view_incoming'),
     url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)$', 'files.view_device_day', name='view_device_day'),
+    #url(r'^data/(?P<deviceId>\w+)/(?P<date>\d+)/audio/$', 'files.get_record_audio', name='get_record_audio'),
+    url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)/log/$', 'files.get_record_log', name='get_record_log'),
 
     url(r'^rsync/$', 'rsync.view_rsync', name='view_rsync'),
     url(r'^cron/$', 'cron.view_cron', name='view_cron'),
@@ -36,10 +39,6 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
     url(r'^configs/new/$', config.new_config, name='new_config'),
     url(r'^configs/(?P<config_id>\w+)/edit/$', config.edit_config, name='edit_config'),
     
-    # Data
-    #(r'^data/(?P<deviceId>\w+)/(?P<date>\d+)/audio/$', data.get_record_audio),
-    #(r'^data/(?P<deviceId>\w+)/(?P<date>\d+)/log/$', data.get_record_log),
-
     # API Views
     url(r'^api/configuration/bulk/get/$', 'api.get_bulk_configs', name='get_bulk_configs'),
     

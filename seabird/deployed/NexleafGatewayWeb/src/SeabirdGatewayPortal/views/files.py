@@ -4,6 +4,9 @@ import logging
 import os
 import os.path
 import stat
+import gzip
+import zipfile
+import tempfile
 
 from datetime import date
 from datetime import datetime
@@ -64,6 +67,62 @@ def view_incoming(request):
     return HttpResponse(t.render(c))
 
 
+@login_required
+def get_record_log(request, device_id=None, viewdate=None):
+    if device_id == None:
+        return HttpResponseNotFound()
+    if viewdate == None:
+        return HttpResponseNotFound()
+    
+    thedate = datetime.strptime(viewdate, '%Y%m%d%H%M%S')
+    datedir = thedate.strftime('%Y/%m/%d')
+    searchdate = thedate.strftime('%Y%m%d_%H%M%S')
+
+    logindir = os.path.normpath(settings.INCOMING_DIR) + "/logs/" + datedir
+    
+    logfiles = []
+    if os.path.exists(logindir):
+        logfiles = os.listdir(logindir)
+
+    foundfile = ''
+    for f in logfiles:
+        if f.find(device_id) > -1 and f.find(searchdate) > -1:
+            foundfile = f
+
+    if foundfile == '':
+        return HttpResponseNotFound('File not found! 1')
+
+    fullfile = logindir + "/" + foundfile
+    if not os.path.exists(fullfile):
+        return HttpResponseNotFound('File not found! 2')
+
+    zf = zipfile.ZipFile(fullfile, mode='r')
+    if 'data.raw' not in zf.namelist():
+        zf.close()
+        return HttpResponseNotFound('No data in zip file!')
+    
+    (fd, name) = tempfile.mkstemp(dir="/tmp/")
+    fd = open(name, 'w')
+    zfd = zf.open('data.raw')
+    fd.write(zfd.read())
+    fd.flush()
+    fd.close()
+    zfd.close()
+    zf.close()
+    
+    #gzf = gzip.GzipFile(fileobj=zf.open('data.raw'), mode='rb')
+    gzf = gzip.GzipFile(filename=name, mode='rb')
+    response = HttpResponse(mimetype="text/plain")
+    #response['Content-Disposition'] = 'attachment; filename=' + upload_list[0].file.get().name.replace('/','_').replace(".raw", ".wav")
+    response.write(gzf.read())
+    gzf.close()
+    os.remove(name)
+    
+    return response
+    
+    
+
+
 def get_total_sizes(directory, filelist):
     retsize = 0
     for f in filelist:
@@ -76,7 +135,7 @@ def get_total_sizes(directory, filelist):
 def view_device_day(request, device_id=None, viewdate=None):
     if device_id == None:
         return HttpResponseNotFound()
-    if date == None:
+    if viewdate == None:
         return HttpResponseNotFound()
 
     dev = get_document_or_404(Device, device_id=device_id)
@@ -96,11 +155,11 @@ def view_device_day(request, device_id=None, viewdate=None):
 
     stadata = []
     for f in datafiles:
-        if f.find(device_id):
+        if f.find(device_id) > -1:
             stadata.append(f)
     logdata = []
     for f in logfiles:
-        if f.find(device_id):
+        if f.find(device_id) > -1:
             logdata.append(f)
     
     stadata.sort()
@@ -135,7 +194,7 @@ def view_device_day(request, device_id=None, viewdate=None):
             st = os.stat(logindir + "/" + f)
             fd_str = f.split('.')[0].split('_')[-2:]
             fd = datetime.strptime(fd_str[0] + '_' + fd_str[1], '%Y%m%d_%H%M%S')
-            alllogs.append({'date': fd.strftime('%Y/%m/%d %H:%M:%S'), 'size': st.st_size, 
+            alllogs.append({'date': fd, 'size': st.st_size, 
                             'created': datetime.fromtimestamp(st.st_ctime).strftime('%Y/%m/%d %H:%M:%S')})
 
 
