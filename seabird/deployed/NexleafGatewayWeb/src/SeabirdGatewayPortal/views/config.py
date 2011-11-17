@@ -12,7 +12,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import Config
+from SeabirdGatewayPortal.Collections.Config import Config, NewConfig
 from SeabirdGatewayPortal.Collections.Device import Device
 from SeabirdGatewayPortal.common.constants import FORM_ERROR_MSG
 from SeabirdGatewayPortal.forms.config import ConfigForm, NewConfigForm, RecordingForm
@@ -55,13 +55,32 @@ def new_config(request):
         config_form = NewConfigForm(request.POST)
         recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
         if config_form.is_valid() and recording_formset.is_valid():
-            # TODO: Save New Config.
-            messages.success(request, 'You have successfully \
-            created the Configuration: %s.' % 'test')
+            
+            # Initialize collection with config settings - add recordings later.
+            new_config = NewConfig(**config_form.cleaned_data)
+            
+            recording_list = []
+            for recording_form in recording_formset.forms:
+                # Conditional due to a minor bug in Django (Ticket #11418)
+                # -- Deleted "blank" formsets are "valid" but don't have cleaned_data
+                # -- So just ignore them when inserting data into mongo.
+                if hasattr(recording_form, 'cleaned_data'):
+                    
+                    # Get value of DELETE from form (and remove it from the dict so it isn't stored)
+                    delete_form = recording_form.cleaned_data.pop('DELETE', '')
+                    if not delete_form:
+                        # TODO: CANT Store datetime or time in mongo dict! (fails to encode!).
+                        # Datetime not BSON compatible! Figure out a work around.
+                        recording_form.cleaned_data.pop('end_date')
+                        recording_form.cleaned_data.pop('start_date')
+                        recording_list.append(recording_form.cleaned_data)
+            # new_config.recording_schedules = recording_list
+            new_config.save()
+            
+            messages.success(request, 'You have successfully created the \
+            Configuration: %s (Version #: %s).' % (new_config.name, new_config.version))
             return HttpResponseRedirect(reverse('show_all_configs'))
             
-            # new_config = Config(**form.cleaned_data)
-            # new_config.save()
             # return HttpResponseRedirect(reverse('show_config',
             #                 kwargs={'config_id':new_config.id}))
         else:

@@ -29,10 +29,10 @@ class NewConfig(Document):
     
     recording_schedules = SortedListField(DictField(), required=False)
     # DICT Includes:
-    # -- start_date
-    # -- end_date
-    # -- start_time
-    # -- end_time
+    # -- start_date (Can't be stored as "Date" object - not BSON Compatible)
+    # -- end_date "SAME"
+    # -- start_time "SAME (Time object)"
+    # -- end_time "SAME (Time object)"
     # -- duration_min (computed from start / end times)
     # -- interval_min
     # -- sampling_length_min
