@@ -118,3 +118,10 @@ table.config_table th, table.config_table td {vertical-align:top; border-bottom:
 table.config_table th.noborder {border:none;}
 
 
+/* Cron Form Styles */
+.cron_form {margin-top:20px;}
+.cron_form .cron_hour_label {font-size:14px;font-weight:bold;margin-bottom:5px;}
+.cron_form .cron_hour_wrapper {margin:5px;font-size:14px;}
+.cron_form input {vertical-align:top;padding:0;margin:0px 5px 0px 0px;font-size:14px;}
+.cron_form label {font-size:14px;vertical-align:top;}
+

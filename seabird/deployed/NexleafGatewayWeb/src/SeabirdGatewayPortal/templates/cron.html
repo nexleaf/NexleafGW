@@ -2,6 +2,10 @@
 
 {% block title %}{{ page_title }}{% endblock %}
 
+{% block header_includes %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/gateway.cron_form.js"></script>
+{% endblock %}
+
 {% block header %}
     <div class="span-24 last">
         <h2 class="page_header">{{ page_title }}</h2>
@@ -31,6 +35,42 @@ crontab -l command output
 <br>
 <input type=submit value="submit">
 </form>
+
+<div class="clear"></div>
+
+<div class="cron_form">
+    <form method="post" action="{% url view_cron %}">
+        {% csrf_token %}
+        
+        <div class="cron_hour_label">
+            Select the hours you'd like the cron to execute each day:
+        </div>
+        
+        {% if cron_hour_errors %}
+        <div class="fielderror" style="padding:5px;">
+            {{ cron_hour_errors }}
+        </div>
+        {% endif %}
+        <a href="javascript:void(0);" class="select_all_hours">Select All</a> /
+        <a href="javascript:void(0);" class="select_none">Select None</a>
+        <br />
+        
+        {% for cron_hour in cron_hour_choices %}
+            <span class="cron_hour_wrapper">
+                <label for="id_cron_hours_{{ cron_hour.0 }}">
+                    <input type="checkbox" name="cron_hours" value="{{ cron_hour.0 }}" id="id_cron_hours_{{ cron_hour.0 }}" />
+                    {{ cron_hour.1 }}
+                </label>
+            </span>
+                {% if forloop.counter|divisibleby:"8" %}
+                    <br />
+                {% endif %}
+        {% endfor %}
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
 
 <br>
 <hr><hr><hr>
