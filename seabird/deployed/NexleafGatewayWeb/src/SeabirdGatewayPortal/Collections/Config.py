@@ -2,6 +2,8 @@ from datetime import datetime, date, time
 from random import randint
 from xml.dom import minidom
 
+from django.template.loader import render_to_string
+
 from mongoengine import Document, DateTimeField, DictField,\
     IntField, ListField, SortedListField, StringField, URLField
 
@@ -107,13 +109,18 @@ class NewConfig(Document):
             self._recording_schedules.append(value)
         else:
             raise TypeError('Invalid object type assigned to Recording Schedules - Must be List or Dict')
-        
     
     
     # Also the "Config Date" in the XML.
     created_date = DateTimeField(required=True)
     
-    # TODO: Make an XML property for displaying the xml.
+    # XML Property for converting object into a formatted configuration
+    @property
+    def xml(self):
+        a = render_to_string('config/config_xml.html', {'config':self})
+        print a
+        return a
+    
     
     def get_devices(self):
         """Returns all the devices that use this config"""

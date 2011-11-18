@@ -1,0 +1,30 @@
+<Configuration>
+    <Version>{{ config.version }}</Version>
+    <Date>{{ config.created_date|date:"YmdHi" }}</Date>
+    <Name>{{ config.name }}</Name>
+    
+    <Settings>
+        <DeploymentId>{{ config.deployment_id }}</DeploymentId>
+        <StationId>{{ config.station_id }}</StationId>
+        <UploadUrl>{{ config.upload_url }}</UploadUrl>
+        <RadioUploadMode>{{ config.radio_upload_mode }}</RadioUploadMode>
+        <UploadInterval>{{ config.upload_interval }}</UploadInterval>
+        <LogcatToDbFlushInterval>{{ config.logcat_to_db_flush_interval }}</LogcatToDbFlushInterval>
+        <LogDbToFileFlushCycle>{{ config.log_db_to_file_flush_cycle }}</LogDbToFileFlushCycle>
+        <RebootTime></RebootTime>
+    </Settings>
+    
+    <Schedule>
+        {% for recording in config.recording_schedules %}
+        <Recording>
+            <StartTime>{{ recording.start_time|date:"Hi" }}</StartTime>
+            <StartDate>{{ recording.start_date|date:"Ymd" }}</StartDate>
+            <EndTime>{{ recording.end_time|date:"Hi" }}</EndTime>
+            <EndDate>{{ recording.end_date|date:"Ymd" }}</EndDate>
+            <DurationMins>{{ recording.duration_min }}</DurationMins>
+            <IntervalMins>{{ recording.interval_min }}</IntervalMins>
+            <SamplingLengthMins>{{ recording.sampling_length_min }}</SamplingLengthMins>
+        </Recording>
+        {% endfor %}
+    </Schedule>
+</Configuration>
