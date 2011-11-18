@@ -13,7 +13,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import Config, ConfigRequestCache
+from SeabirdGatewayPortal.Collections.Config import NewConfig, ConfigRequestCache
 from SeabirdGatewayPortal.Collections.Device import Device
 
 from SeabirdGatewayPortal.utils.Logger import getLog
@@ -29,6 +29,9 @@ log.setLevel(logging.DEBUG)
 socket.setdefaulttimeout(settings.SOCKET_TIMEOUT)
 
 def get_bulk_configs(request):
+    # Broken (for now) - stubbing it out.
+    raise Http404
+    
     # Grab bulk data from primary server.
     try:
         response = urllib2.urlopen(settings.BULK_CONFIGS_URL)
@@ -83,6 +86,9 @@ def get_bulk_configs(request):
 
 # External Phone Services for remote phone reprogramming, etc.
 def dump_device_config(request, device_id, software_version, config_version):
+    # Broken (for now) - stubbing it out.
+    raise Http404
+    
     device = get_document_or_404(Device, device_id=device_id)
     try:
         config = device.config

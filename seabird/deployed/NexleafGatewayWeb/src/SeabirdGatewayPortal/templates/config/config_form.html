@@ -14,7 +14,7 @@
                 <a href="{% url show_all_configs %}">All Configurations</a>
                 &raquo;
                 {% if edit %}
-                    <a href="{% url show_config config.id %}">View Configuration: {{ config.title }}</a>
+                    <a href="{% url show_config config.id %}">View Configuration: {{ config.name }}</a>
                     &raquo;
                     Edit Configuration
                 {% else %}

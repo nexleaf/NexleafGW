@@ -4,7 +4,7 @@ from xml.dom import minidom
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
 
-from SeabirdGatewayPortal.Collections.Config import Config, NewConfig
+from SeabirdGatewayPortal.Collections.Config import NewConfig
 
 RADIO_UPLOAD_CHOICES = (
     ("cell", "cell"),
@@ -108,37 +108,4 @@ class RecordingForm(forms.Form):
         return self.cleaned_data
 
 
-
-class ConfigForm(forms.Form):
-    title = forms.CharField(label='Title')
-    xml = forms.CharField(widget=forms.Textarea(attrs={'class':'xml_textarea'}))
-    version = forms.CharField(label='Version', help_text='Must be Unique!')
-    default_config = forms.BooleanField(required=False, label='Default Config',
-        help_text='Only one config can be the default.')
-    
-    
-    def clean_version(self):
-        version = self.cleaned_data['version']
-        error_msg = "A Configuration with that Version Number Already Exists. \
-        Please enter a different one."
-        if self.config_id:
-            # Editing existing device.
-            if Config.objects(id__ne=self.config_id, version=version).count() > 0:
-                raise forms.ValidationError(error_msg)
-        else:
-            # New Device
-            if Config.objects(version=version).count() > 0:
-                raise forms.ValidationError(error_msg)
-        return version
-    
-    
-    # Basic XML Validation (does it parse?)
-    def clean_xml(self):
-        xml = self.cleaned_data['xml']
-        try:
-            parsed_xml = minidom.parseString(xml)
-        except Exception as e:
-            raise forms.ValidationError("Invalid XML: %s" % str(e))
-        return xml
-    
 

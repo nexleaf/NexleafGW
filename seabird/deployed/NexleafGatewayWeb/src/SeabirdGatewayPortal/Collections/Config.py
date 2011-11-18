@@ -117,6 +117,10 @@ class NewConfig(Document):
     # Default Config
     default_config = BooleanField(default=False, required=True)
     
+    meta = {
+        'ordering': ['name']
+    }
+    
     # XML Property for converting object into a formatted configuration
     @property
     def xml(self):
@@ -152,44 +156,7 @@ class NewConfig(Document):
         
         # Save object.
         super(NewConfig, self).save()
-    
-    
 
-
-class Config(Document):
-    title = StringField(required=True)
-    xml = StringField(required=True)
-    version = StringField(unique=True, required=True)
-    created_date = DateTimeField(required=True)
-    meta = {
-        'ordering': ['title']
-    }
-    
-    def get_parsed_xml(self, device_id=None):
-        """
-            Returns parsed xml for config.  If device_id is provided, inserts
-            this as an attribute into the main Configuration element
-        """
-        parsed_xml = minidom.parseString(self.xml)
-        if device_id:
-            try:
-                # In case of malformed xml (no Configuration element)
-                config_element = parsed_xml.getElementsByTagName('Configuration')[0]
-                config_element.setAttribute('assignToDeviceId', device_id)
-            except:
-                pass
-        return parsed_xml
-    
-    
-    def __unicode__(self):
-        return '%s' % self.title
-    
-    
-    def save(self):
-        if not self.id:
-            self.created_date = datetime.now()
-        super(Config, self).save()
-    
 
 
 class ConfigRequestCache(Document):
