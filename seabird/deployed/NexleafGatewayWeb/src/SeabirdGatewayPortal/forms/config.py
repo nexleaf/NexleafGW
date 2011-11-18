@@ -19,22 +19,22 @@ class ConfigForm(forms.Form):
     name = forms.CharField(label='Config Name')
     
     # Settings:
-    deployment_id = forms.CharField(label='Deployment ID')
-    station_id = forms.CharField(label='Station ID')
+    deployment_id = forms.CharField(label='Deployment ID', initial="Tern_Island")
+    station_id = forms.CharField(label='Station ID', initial="WAM")
     
-    upload_url = forms.URLField(label='Upload URL', help_text="Must begin with: http://")
+    upload_url = forms.URLField(label='Upload URL', help_text="Must begin with: http://", initial="http://131.179.144.62/seabird/upload/")
     
-    radio_upload_mode = forms.ChoiceField(label='Radio Upload Mode', choices=RADIO_UPLOAD_CHOICES)
+    radio_upload_mode = forms.ChoiceField(label='Radio Upload Mode', choices=RADIO_UPLOAD_CHOICES, initial="wifi")
     upload_interval = forms.IntegerField(required=True, min_value=0,
-        label="Upload Interval", help_text="In Minutes")
+        label="Upload Interval", help_text="In Minutes", initial=5)
     
     logcat_to_db_flush_interval = forms.IntegerField(required=True, min_value=0,
-        label="Logcat To Db Flush Interval", help_text="In Minutes")
+        label="Logcat To Db Flush Interval", help_text="In Minutes", initial=5)
     log_db_to_file_flush_cycle = forms.IntegerField(required=True, min_value=0,
-        label="Log Db To File Flush Cycle", help_text="In Minutes")
+        label="Log Db To File Flush Cycle", help_text="In Minutes", initial=3)
     
     reboot_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
-        label='Reboot Time', help_text="HH:MM using a 24hr clock.")
+        label='Reboot Time', help_text="HH:MM using a 24hr clock.", initial="14:00")
     
     default_config = forms.BooleanField(required=False, label='Default Config',
         help_text='Only one config can be the default.')
