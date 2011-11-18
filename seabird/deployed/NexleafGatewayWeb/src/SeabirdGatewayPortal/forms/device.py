@@ -2,7 +2,7 @@ from xml.dom import minidom
 
 from django import forms
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig
+from SeabirdGatewayPortal.Collections.Config import Config
 from SeabirdGatewayPortal.Collections.Device import Device
 
 # Most basic Device Data form.
@@ -12,13 +12,13 @@ class DeviceForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super(DeviceForm, self).__init__(*args, **kwargs)
-        self.fields['config'].choices = [ (c.id, c.name) for c in NewConfig.objects]
+        self.fields['config'].choices = [ (c.id, c.name) for c in Config.objects]
     
     def clean_config(self):
         # ChoiceField just returns the ID of the Config.  Return the actual Object.
         config_id = self.cleaned_data['config']
         try:
-            config = NewConfig.objects.get(id=config_id)
+            config = Config.objects.get(id=config_id)
             self.cleaned_data['config'] = config
             return config
         except:

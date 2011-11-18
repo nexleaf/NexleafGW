@@ -4,7 +4,7 @@ from xml.dom import minidom
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig
+from SeabirdGatewayPortal.Collections.Config import Config
 
 RADIO_UPLOAD_CHOICES = (
     ("cell", "cell"),
@@ -13,7 +13,7 @@ RADIO_UPLOAD_CHOICES = (
 )
 
 # Both of these combine to form a complete configuration.
-class NewConfigForm(forms.Form):
+class ConfigForm(forms.Form):
     # Version and Date are computed automatically while saving configuration.
     name = forms.CharField(label='Config Name')
     
@@ -41,7 +41,7 @@ class NewConfigForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # Used to determine if editing or creating a config
         self.config_id = kwargs.pop('config_id', None)
-        super(NewConfigForm, self).__init__(*args, **kwargs)
+        super(ConfigForm, self).__init__(*args, **kwargs)
     
     def clean_default_config(self):
         default_config = self.cleaned_data["default_config"]
@@ -51,7 +51,7 @@ class NewConfigForm(forms.Form):
                 # Editing existing device - exclude it.
                 params['id__ne'] = self.config_id
             
-            if NewConfig.objects(**params).count() > 0:
+            if Config.objects(**params).count() > 0:
                 raise forms.ValidationError("Invalid Default Selection. \
                 Only one xml configuration can be the default at a time.")
         return default_config

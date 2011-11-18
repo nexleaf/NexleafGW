@@ -12,10 +12,10 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig
+from SeabirdGatewayPortal.Collections.Config import Config
 from SeabirdGatewayPortal.Collections.Device import Device
 from SeabirdGatewayPortal.common.constants import FORM_ERROR_MSG
-from SeabirdGatewayPortal.forms.config import NewConfigForm, RecordingForm
+from SeabirdGatewayPortal.forms.config import ConfigForm, RecordingForm
 from SeabirdGatewayPortal.utils.Logger import getLog
 
 # Connect to MongoDB - Gateway.
@@ -27,7 +27,7 @@ log.setLevel(logging.DEBUG)
 # Show All Configs
 @login_required
 def show_all_configs(request):
-    configs = NewConfig.objects
+    configs = Config.objects
     return render_to_response('config/all_configs.html', 
         {
             'configs':configs,
@@ -38,7 +38,7 @@ def show_all_configs(request):
 # View Individual Config
 @login_required
 def show_config(request, config_id):
-    config = get_document_or_404(NewConfig, id=config_id)
+    config = get_document_or_404(Config, id=config_id)
     return render_to_response('config/config.html', 
         {
             'config':config,
@@ -51,12 +51,12 @@ def show_config(request, config_id):
 def new_config(request):
     RecordingFormSet = formset_factory(RecordingForm, extra=1, can_delete=True)
     if request.method == 'POST':
-        config_form = NewConfigForm(request.POST)
+        config_form = ConfigForm(request.POST)
         recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
         if config_form.is_valid() and recording_formset.is_valid():
             
             # Initialize collection with config settings - add recordings later.
-            new_config = NewConfig(**config_form.cleaned_data)
+            new_config = Config(**config_form.cleaned_data)
             
             recording_list = []
             for recording_form in recording_formset.forms:
@@ -79,7 +79,7 @@ def new_config(request):
         else:
             messages.error(request, FORM_ERROR_MSG)
     else:
-        config_form = NewConfigForm()
+        config_form = ConfigForm()
         recording_formset = RecordingFormSet(prefix='recordingform')
     
     return render_to_response('config/config_form.html', 
@@ -94,7 +94,7 @@ def new_config(request):
 
 @login_required
 def edit_config(request, config_id):
-    config = get_document_or_404(NewConfig, id=config_id)
+    config = get_document_or_404(Config, id=config_id)
     
     # need at least one recording form on the page to be cloned, etc.
     extra_form = 0
@@ -104,7 +104,7 @@ def edit_config(request, config_id):
     
     if request.method == 'POST':
         # Include config_id for default validation.
-        config_form = NewConfigForm(request.POST, config_id=config.id)
+        config_form = ConfigForm(request.POST, config_id=config.id)
         recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
         
         if config_form.is_valid() and recording_formset.is_valid():
@@ -137,9 +137,9 @@ def edit_config(request, config_id):
     else:
         # Initialize data using the fields required by the config form.
         # Includes both actual db fields and properties in the Collection.
-        fields = NewConfigForm().fields.keys()
+        fields = ConfigForm().fields.keys()
         field_dict = dict([(field, getattr(config, field)) for field in fields])
-        config_form = NewConfigForm(initial=field_dict)
+        config_form = ConfigForm(initial=field_dict)
         
         # Initialize Recording Formset data (easy!)
         recording_formset = RecordingFormSet(initial=config.recording_schedules, prefix='recordingform')

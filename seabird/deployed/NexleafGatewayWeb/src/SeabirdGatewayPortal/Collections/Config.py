@@ -12,7 +12,7 @@ DATE_FORMAT = '%Y-%m-%d'
 TIME_FORMAT = '%H:%M:%S'
 
 # As you are creating this collection, make a list of questions to ask Martin.
-class NewConfig(Document):
+class Config(Document):
     name = StringField(required=True)
     version = StringField(unique=True, required=True)
     
@@ -155,7 +155,7 @@ class NewConfig(Document):
             # TODO: Ensure uniqueness by performing a query?
         
         # Save object.
-        super(NewConfig, self).save()
+        super(Config, self).save()
 
 
 

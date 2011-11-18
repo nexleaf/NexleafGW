@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig
+from SeabirdGatewayPortal.Collections.Config import Config
 from SeabirdGatewayPortal.Collections.Device import Device
 from SeabirdGatewayPortal.utils.Logger import getLog
 

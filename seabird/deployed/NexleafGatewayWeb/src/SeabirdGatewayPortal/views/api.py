@@ -13,7 +13,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig, ConfigRequestCache
+from SeabirdGatewayPortal.Collections.Config import Config, ConfigRequestCache
 from SeabirdGatewayPortal.Collections.Device import Device
 
 from SeabirdGatewayPortal.utils.Logger import getLog

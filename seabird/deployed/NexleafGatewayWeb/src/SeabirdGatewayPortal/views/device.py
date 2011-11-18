@@ -12,7 +12,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import NewConfig
+from SeabirdGatewayPortal.Collections.Config import Config
 from SeabirdGatewayPortal.Collections.Device import Device
 from SeabirdGatewayPortal.common.constants import FORM_ERROR_MSG
 from SeabirdGatewayPortal.forms.device import DeviceForm, NewDeviceForm
@@ -108,7 +108,7 @@ def edit_device(request, device_id=None):
         # Fix the reference to the deviceConfig to be the id
         # instead of the obj for choice field initialization.
         if field_dict.has_key('config'):
-            if isinstance(field_dict['config'], NewConfig):
+            if isinstance(field_dict['config'], Config):
                 field_dict['config'] = field_dict['config'].id
         form = DeviceForm(initial=field_dict)
     return render_to_response('device/device_form.html', 
