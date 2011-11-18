@@ -4,7 +4,7 @@ from xml.dom import minidom
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
 
-from SeabirdGatewayPortal.Collections.Config import Config
+from SeabirdGatewayPortal.Collections.Config import Config, NewConfig
 
 RADIO_UPLOAD_CHOICES = (
     ("cell", "cell"),
@@ -34,6 +34,27 @@ class NewConfigForm(forms.Form):
     
     reboot_time = forms.TimeField(required=True, widget=forms.TimeInput(format="%H:%M"), 
         label='Reboot Time', help_text="HH:MM using a 24hr clock.")
+    
+    default_config = forms.BooleanField(required=False, label='Default Config',
+        help_text='Only one config can be the default.')
+    
+    def __init__(self, *args, **kwargs):
+        # Used to determine if editing or creating a config
+        self.config_id = kwargs.pop('config_id', None)
+        super(NewConfigForm, self).__init__(*args, **kwargs)
+    
+    def clean_default_config(self):
+        default_config = self.cleaned_data["default_config"]
+        if default_config == True:
+            params = {"default_config":True}
+            if self.config_id:
+                # Editing existing device - exclude it.
+                params['id__ne'] = self.config_id
+            
+            if NewConfig.objects(**params).count() > 0:
+                raise forms.ValidationError("Invalid Default Selection. \
+                Only one xml configuration can be the default at a time.")
+        return default_config
 
 
 class RecordingForm(forms.Form):
@@ -55,7 +76,7 @@ class RecordingForm(forms.Form):
     # Duration automatically calculated from start / stop time.
     interval_min = forms.IntegerField(required=True, min_value=0, label="Interval", help_text="In Minutes")
     sampling_length_min = forms.IntegerField(required=True, min_value=0, label="Sampling Length", help_text="In Minutes")
-        
+    
     def clean(self):
         start_date = self.cleaned_data.get('start_date')
         end_date = self.cleaned_data.get('end_date')
@@ -95,10 +116,6 @@ class ConfigForm(forms.Form):
     default_config = forms.BooleanField(required=False, label='Default Config',
         help_text='Only one config can be the default.')
     
-    def __init__(self, *args, **kwargs):
-        # Used to determine if editing or creating a config
-        self.config_id = kwargs.pop('config_id', None)
-        super(ConfigForm, self).__init__(*args, **kwargs)
     
     def clean_version(self):
         version = self.cleaned_data['version']
@@ -123,19 +140,5 @@ class ConfigForm(forms.Form):
         except Exception as e:
             raise forms.ValidationError("Invalid XML: %s" % str(e))
         return xml
-    
-    
-    def clean_default_config(self):
-        default_config = self.cleaned_data["default_config"]
-        if default_config == True:
-            params = {"default_config":True}
-            if self.config_id:
-                # Editing existing device - exclude it.
-                params['id__ne'] = self.config_id
-            
-            if Config.objects(**params).count() > 0:
-                raise forms.ValidationError("Invalid Default Selection. \
-                Only one xml configuration can be the default at a time.")
-        return default_config
     
 

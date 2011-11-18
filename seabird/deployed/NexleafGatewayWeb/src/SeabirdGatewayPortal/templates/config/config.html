@@ -19,7 +19,7 @@
 {% block content %}
 <table class="config_table">
     <tr>
-        <th>Config Name:</th>
+        <th>Name:</th>
         <td>{{ config.name }}</td>
     </tr>
     <tr>
@@ -44,7 +44,16 @@
             {% endfor %}
         </td>
     </tr>
-
+    <tr>
+        <th>Default Config:</th>
+        <td>
+            {% if config.default_config %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </td>
+    </tr>
     <tr>
         <th colspan="2" class="noborder">XML Configuration:</th>
     </tr>

@@ -103,7 +103,8 @@ def edit_config(request, config_id):
     RecordingFormSet = formset_factory(RecordingForm, extra=extra_form, can_delete=True)
     
     if request.method == 'POST':
-        config_form = NewConfigForm(request.POST)
+        # Include config_id for default validation.
+        config_form = NewConfigForm(request.POST, config_id=config.id)
         recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
         
         if config_form.is_valid() and recording_formset.is_valid():

@@ -4,7 +4,7 @@ from xml.dom import minidom
 
 from django.template.loader import render_to_string
 
-from mongoengine import Document, DateTimeField, DictField,\
+from mongoengine import BooleanField, DateTimeField, DictField, Document, \
     IntField, ListField, SortedListField, StringField, URLField
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -113,6 +113,9 @@ class NewConfig(Document):
     
     # Also the "Config Date" in the XML.
     created_date = DateTimeField(required=True)
+    
+    # Default Config
+    default_config = BooleanField(default=False, required=True)
     
     # XML Property for converting object into a formatted configuration
     @property

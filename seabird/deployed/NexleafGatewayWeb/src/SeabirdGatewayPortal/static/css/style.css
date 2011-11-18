@@ -52,6 +52,9 @@ div.nexleaf_logo {float:right;}
 
 .form_field .short_field input {width:150px;}
 
+/* Modified style for checkboxes */
+.checkbox_field .form_field label {display:inline;float:left; text-align:left;}
+
 .required {color:red;font-size:12px;vertical-align:top;}
 .fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
 
@@ -103,6 +106,11 @@ table.all_devices th {vertical-align:top;}
 table.device_table {}
 table.device_table th {width:124px;vertical-align:top;padding-right:2px;}
 table.device_table th, table.device_table td {vertical-align:top; border-bottom:1px solid #e5e5e5;}
+
+/* Config Display Styles */
+table.all_configs_table {}
+table.all_configs_table td {vertical-align:top;}
+table.all_configs_table td.default_config {vertical-align:middle; text-align:center;}
 
 table.config_table {}
 table.config_table th {width:120px;}
