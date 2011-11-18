@@ -7,6 +7,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from SeabirdGatewayPortal.Collections.Config import Config
 
 RADIO_UPLOAD_CHOICES = (
+    ('', "---"),
     ("cell", "cell"),
     ("logger", "logger"),
     ("wifi", "wifi"),
