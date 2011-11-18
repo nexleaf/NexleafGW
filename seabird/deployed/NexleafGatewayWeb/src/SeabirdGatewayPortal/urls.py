@@ -18,8 +18,9 @@ urlpatterns = patterns('SeabirdGatewayPortal.views',
 
     url(r'^files/$', 'files.view_incoming_grid', name='view_incoming'),
     url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)$', 'files.view_device_day', name='view_device_day'),
-    #url(r'^data/(?P<deviceId>\w+)/(?P<date>\d+)/audio/$', 'files.get_record_audio', name='get_record_audio'),
+    url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)/audio/$', 'files.get_record_audio', name='get_record_audio'),
     url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)/log/$', 'files.get_record_log', name='get_record_log'),
+    url(r'^files/(?P<device_id>\w+)/(?P<viewdate>\d+)/audio/specgram/$', 'files.get_record_audio_specgram', name='get_record_audio_specgram'),
 
     url(r'^rsync/$', 'rsync.view_rsync', name='view_rsync'),
     url(r'^cron/$', 'cron.view_cron', name='view_cron'),

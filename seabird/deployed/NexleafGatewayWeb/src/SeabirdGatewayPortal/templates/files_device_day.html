@@ -17,17 +17,19 @@
 <td style="vertical-align: top;">
 
 DATA:
-<table>
-<tr>
+<table class="data_table">
+<tr class="{% cycle 'even' 'odd' %}">
 <td>Date</td>
 <td>Mins</td>
-<td>On Gateway</td>
+<td>On Gateway Since</td>
+<td>Spectrogram</td>
 </tr>
 {% for d in alldata %}
 <tr>
-<td>{{ d.date }}</td>
+<td><a href='{% url get_record_audio dev.device_id d.date|date:"YmdHis" %}'>{{ d.date|date:"Y-m-d H:i:s" }}</td>
 <td>{{ d.mins }}</td>
 <td>{{ d.created }} </td>
+<td><a href='{% url get_record_audio_specgram dev.device_id d.date|date:"YmdHis" %}'>Spectrogram</a></td>
 </tr>
 {% endfor %}
 </table>
@@ -40,15 +42,15 @@ DATA:
 
 <td style="vertical-align: top;">
 LOGS:
-<table>
-<tr>
+<table class="data_table">
+<tr class="{% cycle 'even' 'odd' %}">
 <td>Date</td>
 <td>Size</td>
-<td>On Gateway</td>
+<td>On Gateway Since</td>
 </tr>
 {% for d in alllogs %}
 <tr>
-<td><a href='{% url get_record_log dev.device_id d.date|date:"YmdHis" %}'>{{ d.date|date:"Y-m-d H:i:s"  }}</a></td>
+<td><a href='{% url get_record_log dev.device_id d.date|date:"YmdHis" %}'>{{ d.date|date:"Y-m-d H:i:s" }}</a></td>
 <td>{{ d.size }}</td>
 <td>{{ d.created }} </td>
 </tr>

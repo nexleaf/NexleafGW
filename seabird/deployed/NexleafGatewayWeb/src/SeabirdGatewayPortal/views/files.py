@@ -7,6 +7,8 @@ import stat
 import gzip
 import zipfile
 import tempfile
+import subprocess
+import struct
 
 from datetime import date
 from datetime import datetime
@@ -67,12 +69,111 @@ def view_incoming(request):
     return HttpResponse(t.render(c))
 
 
+def get_audio_data(device_id=None, viewdate=None):
+    thedate = datetime.strptime(viewdate, '%Y%m%d%H%M%S')
+    datedir = thedate.strftime('%Y/%m/%d')
+    searchdate = thedate.strftime('%Y%m%d_%H%M%S')
+
+    dataindir = os.path.normpath(settings.INCOMING_DIR) + "/data/" + datedir
+    
+    datafiles_all = []
+    if os.path.exists(dataindir):
+        datafiles_all = os.listdir(dataindir)
+    
+    # hah!
+    datafiles = filter(lambda x: x.find(device_id) > -1, datafiles_all)
+    datafiles.sort()
+
+    foundbaseidx = -1
+    for i in range(len(datafiles)):
+        if datafiles[i].find(device_id) > -1 and datafiles[i].find(searchdate) > -1:
+            foundbaseidx = i
+
+    if foundbaseidx == -1:
+        raise Http404 # HttpResponseNotFound('File not found!')
+
+    seconds20 = timedelta(seconds=20)
+    catfiles = [foundbaseidx]
+    datestr_arr = datafiles[foundbaseidx].split('.')[0].split('_')[-2:]
+    currdate = datetime.strptime(datestr_arr[0] + "_" + datestr_arr[1], "%Y%m%d_%H%M%S")
+    for i in range(foundbaseidx + 1, len(datafiles)):
+        datestr_arr = datafiles[i].split('.')[0].split('_')[-2:]
+        newdate = datetime.strptime(datestr_arr[0] + "_" + datestr_arr[1], "%Y%m%d_%H%M%S")
+        if newdate - currdate < seconds20:
+            catfiles.append(i)
+            currdate = newdate
+        else:
+            break
+    
+    thedata = ''
+    for i in catfiles:
+        zf = zipfile.ZipFile(dataindir + "/" + datafiles[i], 'r')
+        zfd = zf.open('data.raw')
+        thedata += zfd.read()
+        zfd.close()
+        zf.close()
+
+    (fd, name) = tempfile.mkstemp(suffix=".wav", dir="/tmp/")
+    ps = subprocess.Popen("sox -t raw -s -B -b 16 -c 1 -r 22050 - " + name, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    #ps.stdin.write(thedata)
+    #response.write(ps.stdout.read())
+    ps.communicate(input=thedata)
+
+    ps.wait()
+
+    fd = open(name, 'rb')
+    retdata = fd.read()
+    fd.close()
+    os.remove(name)
+    filename = device_id + "_" + searchdate + ".wav"
+
+    return retdata, filename
+
+
+@login_required
+def get_record_audio_specgram(request, device_id=None, viewdate=None):
+    if device_id == None:
+        return HttpResponseNotFound('Invalid device')
+    if viewdate == None:
+        return HttpResponseNotFound('Invalid date')
+
+    dev = get_document_or_404(Device, device_id=device_id)
+
+    (adata, filename) = get_audio_data(device_id, viewdate)
+    plotarr = []
+    samps = len(adata) / 2
+    plotarr.extend(struct.unpack('<%dh' % (samps), adata))
+    from SeabirdGatewayPortal.utils.spectrogram import spectrogram_lighter
+    
+    response = HttpResponse(mimetype='image/png')
+    spectrogram_lighter(response, plotarr, 22050, dev.device_id + " " + dev.device_name, ' ', viewdate)
+    return response
+
+
+
+@login_required
+def get_record_audio(request, device_id=None, viewdate=None):
+    if device_id == None:
+        return HttpResponseNotFound('Invalid device')
+    if viewdate == None:
+        return HttpResponseNotFound('Invalid date')
+
+    (adata, filename) = get_audio_data(device_id, viewdate)
+
+    response = HttpResponse(mimetype="audio/xwav")
+    response['Content-Disposition'] = 'attachment; filename=' + filename
+    response.write(adata)
+    
+    return response
+
+
+    
 @login_required
 def get_record_log(request, device_id=None, viewdate=None):
     if device_id == None:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Invalid device')
     if viewdate == None:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Invalid date')
     
     thedate = datetime.strptime(viewdate, '%Y%m%d%H%M%S')
     datedir = thedate.strftime('%Y/%m/%d')
@@ -134,9 +235,9 @@ def get_total_sizes(directory, filelist):
 @login_required
 def view_device_day(request, device_id=None, viewdate=None):
     if device_id == None:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Invalid device')
     if viewdate == None:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Invalid date')
 
     dev = get_document_or_404(Device, device_id=device_id)
     
@@ -181,7 +282,7 @@ def view_device_day(request, device_id=None, viewdate=None):
                 prevdate = currdate
             else:
                 st = os.stat(dataindir + "/" + basefile)
-                alldata.append({'date': basedate.strftime('%Y/%m/%d %H:%M:%S'), 'mins': filecount / 4.0,
+                alldata.append({'date': basedate, 'mins': filecount / 4.0,
                                 'created': datetime.fromtimestamp(st.st_ctime).strftime('%Y/%m/%d %H:%M:%S')})
                 basedate=currdate
                 prevdate = currdate

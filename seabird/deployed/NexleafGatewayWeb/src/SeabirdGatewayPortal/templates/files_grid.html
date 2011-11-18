@@ -21,7 +21,7 @@ Total disk usage: {{ diskusage }}
 Table shows "number of audio files" / "number of log files" ... divide audio files by 4 to get minutes
 <br>
 
-<table border=1>
+<table class="data_table">
 <tr>
 <td>Device</td>
 {% for d in dates %}
@@ -29,7 +29,7 @@ Table shows "number of audio files" / "number of log files" ... divide audio fil
 {% endfor %}
 </tr>
 {% for rec in allfiles %}
-<tr>
+<tr class="{% cycle 'even' 'odd' %}">
 <td>{{ rec.staprn }}</td>
 {% for dd in rec.counts %}
 {% if not dd.data and not dd.logs %}
