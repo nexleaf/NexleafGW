@@ -67,14 +67,15 @@ class NewConfig(Document):
         '''GET Method for _recording_schedules.'''
         recording_list = []
         for recording_dict in self._recording_schedules:
-            # Convert Date and Time objects string representation back into objects
-            # Cast to string before attempting conversion as strptime gets confused about object, it seems (errors).
-            recording_dict['start_date'] = datetime.strptime(str(recording_dict['start_date']), DATE_FORMAT).date()
-            recording_dict['end_date'] = datetime.strptime(str(recording_dict['end_date']), DATE_FORMAT).date()
+            if recording_dict.keys() > 0:
+                # Convert Date and Time objects string representation back into objects
+                # Cast to string before attempting conversion as strptime gets confused about object, it seems (errors).
+                recording_dict['start_date'] = datetime.strptime(str(recording_dict['start_date']), DATE_FORMAT).date()
+                recording_dict['end_date'] = datetime.strptime(str(recording_dict['end_date']), DATE_FORMAT).date()
             
-            recording_dict['start_time'] = datetime.strptime(str(recording_dict['start_time']), TIME_FORMAT).time()
-            recording_dict['end_time'] = datetime.strptime(str(recording_dict['end_time']), TIME_FORMAT).time()
-            recording_list.append(recording_dict)
+                recording_dict['start_time'] = datetime.strptime(str(recording_dict['start_time']), TIME_FORMAT).time()
+                recording_dict['end_time'] = datetime.strptime(str(recording_dict['end_time']), TIME_FORMAT).time()
+                recording_list.append(recording_dict)
         
         return recording_list
     
@@ -114,6 +115,15 @@ class NewConfig(Document):
     
     # TODO: Make an XML property for displaying the xml.
     
+    def get_devices(self):
+        """Returns all the devices that use this config"""
+        
+        # Has to be here - causes circular import at the top of file.
+        from SeabirdGatewayPortal.Collections.Device import Device
+        devices = Device.objects(config=self)
+        return devices
+    
+    
     def __unicode__(self):
         return '%s' % self.name
     
@@ -135,6 +145,7 @@ class NewConfig(Document):
         # Save object.
         super(NewConfig, self).save()
     
+    
 
 
 class Config(Document):
@@ -145,15 +156,6 @@ class Config(Document):
     meta = {
         'ordering': ['title']
     }
-    
-    def get_devices(self):
-        """Returns all the devices that use this config"""
-        
-        # Has to be here - causes circular import at the top of file.
-        from SeabirdGatewayPortal.Collections.Device import Device
-        devices = Device.objects(config=self)
-        return devices
-    
     
     def get_parsed_xml(self, device_id=None):
         """

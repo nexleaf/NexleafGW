@@ -12,18 +12,19 @@
 {{ recording_formset.management_form }}
 
 {% for recording_form in recording_formset.forms %}
-    {% if recording_form.non_field_errors %}
-        <ul class="error">
-            {{recording_form.non_field_errors}}
-        </ul>
-    {% endif %}
-    
     <div class="recording_container">
         <h4 class="form_subsection_header">
             Recording #<span class="recording_number">{{ forloop.counter }}</span>:
         </h4>
         
-        <div class="remove_recording_container{% if forloop.first %} hide{% endif %}">
+        {% if recording_form.non_field_errors %}
+            <ul class="error">
+                An Error Has Occurred:
+                {{recording_form.non_field_errors}}
+            </ul>
+        {% endif %}
+        
+        <div class="remove_recording_container">
             <a href="javascript:void(0);" class="remove_recording remove_form"><span></span></a>
         </div>
         

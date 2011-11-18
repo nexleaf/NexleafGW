@@ -14,14 +14,14 @@
 {% block content %}
     <table class="all_configs_table data_table">
         <tr>
-            <th>Config Title</th>
+            <th>Config Name</th>
             <th>Version Num.</th>
             <th>Created Date</th>
             <th>Assigned to Devices</th>
         </tr>
     {% for config in configs %}
         <tr class="{% cycle 'even' 'odd' %}">
-            <td><a href="{% url show_config config.id %}">{{ config.title }}</a></td>
+            <td><a href="{% url show_config config.id %}">{{ config.name }}</a></td>
             <td>{{ config.version }}</td>
             <td>{{ config.created_date|date:"M j, Y, g:i a" }}</td>
             <td>

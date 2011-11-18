@@ -35,14 +35,8 @@
 {% endif %}
         {% csrf_token %}
         
-        {% if edit %}
-            {# So edit form still works while form changeover in progress. #}
-            {{ form.as_p }}
-        {% else %}
-            {% include 'config/include/_config_settings_form.html' %}
-            {% include 'config/include/_recording_schedule_form.html' %}
-        {% endif %}
-        
+        {% include 'config/include/_config_settings_form.html' %}
+        {% include 'config/include/_recording_schedule_form.html' %}
     
         <table class="form_table">
             <tr>

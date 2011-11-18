@@ -9,7 +9,7 @@
             <span class="breadcrumbs">
                 <a href="{% url show_all_configs %}">All Configurations</a>
                 &raquo;
-                View Config: {{ config.title }}
+                View Config: {{ config.name }}
             </span>
         </h2>
     </div>
@@ -19,8 +19,8 @@
 {% block content %}
 <table class="config_table">
     <tr>
-        <th>Title:</th>
-        <td>{{ config.title }}</td>
+        <th>Config Name:</th>
+        <td>{{ config.name }}</td>
     </tr>
     <tr>
         <th>Version:</th>

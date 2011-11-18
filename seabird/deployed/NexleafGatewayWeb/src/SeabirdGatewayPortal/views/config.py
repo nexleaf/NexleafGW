@@ -27,7 +27,7 @@ log.setLevel(logging.DEBUG)
 # Show All Configs
 @login_required
 def show_all_configs(request):
-    configs = Config.objects
+    configs = NewConfig.objects
     return render_to_response('config/all_configs.html', 
         {
             'configs':configs,
@@ -38,11 +38,11 @@ def show_all_configs(request):
 # View Individual Config
 @login_required
 def show_config(request, config_id):
-    config = get_document_or_404(Config, id=config_id)
+    config = get_document_or_404(NewConfig, id=config_id)
     return render_to_response('config/config.html', 
         {
             'config':config,
-            'page_title': 'View Configuration: %s' % config.title,
+            'page_title': 'View Configuration: %s' % config.name,
         }, context_instance=RequestContext(request))
 
 
@@ -50,7 +50,6 @@ def show_config(request, config_id):
 @login_required
 def new_config(request):
     RecordingFormSet = formset_factory(RecordingForm, extra=1, can_delete=True)
-    
     if request.method == 'POST':
         config_form = NewConfigForm(request.POST)
         recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
@@ -67,17 +66,16 @@ def new_config(request):
                 if hasattr(recording_form, 'cleaned_data'):
                     # Get value of DELETE from form (and remove it from the dict so it isn't stored)
                     delete_form = recording_form.cleaned_data.pop('DELETE', '')
-                    if not delete_form:
+                    
+                    # Don't store empty dicts or deleted recording data!
+                    if not delete_form and len(recording_form.cleaned_data.keys()) > 0:
                         recording_list.append(recording_form.cleaned_data)
             new_config.recording_schedules = recording_list
             new_config.save()
             
             messages.success(request, 'You have successfully created the \
             Configuration: %s (Version #: %s).' % (new_config.name, new_config.version))
-            return HttpResponseRedirect(reverse('show_all_configs'))
-            
-            # return HttpResponseRedirect(reverse('show_config',
-            #                 kwargs={'config_id':new_config.id}))
+            return HttpResponseRedirect(reverse('show_config', kwargs={'config_id':new_config.id}))
         else:
             messages.error(request, FORM_ERROR_MSG)
     else:
@@ -91,6 +89,68 @@ def new_config(request):
             'config_form':config_form,
             'recording_formset':recording_formset,
         }, context_instance=RequestContext(request))
+
+
+
+@login_required
+def edit_config(request, config_id):
+    config = get_document_or_404(NewConfig, id=config_id)
+    
+    # need at least one recording form on the page to be cloned, etc.
+    extra_form = 0
+    if len(config.recording_schedules) == 0:
+        extra_form = 1
+    RecordingFormSet = formset_factory(RecordingForm, extra=extra_form, can_delete=True)
+    
+    if request.method == 'POST':
+        config_form = NewConfigForm(request.POST)
+        recording_formset = RecordingFormSet(request.POST, prefix='recordingform')
+        
+        if config_form.is_valid() and recording_formset.is_valid():
+            # Get post data from the config settings form into the collection.
+            for field, value in config_form.cleaned_data.items():
+                if hasattr(config, field):
+                    setattr(config, field, value)
+            
+            # Get post data from the recording formset (same as new since it's just a list of dicts)
+            recording_list = []
+            for recording_form in recording_formset.forms:
+                # Conditional due to a minor bug in Django (Ticket #11418)
+                # -- Deleted "blank" formsets are "valid" but don't have cleaned_data
+                # -- So just ignore them when inserting data into mongo.
+                if hasattr(recording_form, 'cleaned_data'):
+                    # Get value of DELETE from form (and remove it from the dict so it isn't stored)
+                    delete_form = recording_form.cleaned_data.pop('DELETE', '')
+                    if not delete_form and len(recording_form.cleaned_data.keys()) > 0:
+                        recording_list.append(recording_form.cleaned_data)
+            config.recording_schedules = recording_list
+            config.save()
+            
+            messages.success(request, 'You have successfully \
+            updated the XML Configuration: %s.' % config.name)
+            
+            return HttpResponseRedirect(reverse('show_config',
+                kwargs={'config_id':config.id}))
+        else:
+            messages.error(request, FORM_ERROR_MSG)
+    else:
+        # Initialize data using the fields required by the config form.
+        # Includes both actual db fields and properties in the Collection.
+        fields = NewConfigForm().fields.keys()
+        field_dict = dict([(field, getattr(config, field)) for field in fields])
+        config_form = NewConfigForm(initial=field_dict)
+        
+        # Initialize Recording Formset data (easy!)
+        recording_formset = RecordingFormSet(initial=config.recording_schedules, prefix='recordingform')
+    return render_to_response('config/config_form.html', 
+        {
+            'page_title': 'Edit Configuration:  %s' % config.name,
+            'edit':True,
+            'config':config,
+            'config_form':config_form,
+            'recording_formset':recording_formset,
+        }, context_instance=RequestContext(request))
+    
 
 
 # New Config (using old style form / collection).
@@ -119,7 +179,7 @@ def new_old_config(request):
 
 # Edit Existing Config
 @login_required
-def edit_config(request, config_id):
+def edit_old_config(request, config_id):
     config = get_document_or_404(Config, id=config_id)
     if request.method == 'POST':
         # Include pk for uniqueness validation.
