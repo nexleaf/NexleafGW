@@ -120,9 +120,7 @@ class NewConfig(Document):
     # XML Property for converting object into a formatted configuration
     @property
     def xml(self):
-        a = render_to_string('config/config_xml.html', {'config':self})
-        print a
-        return a
+        return render_to_string('config/config_xml.html', {'config':self})
     
     
     def get_devices(self):
