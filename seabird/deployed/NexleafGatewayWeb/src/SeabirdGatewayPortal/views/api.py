@@ -86,17 +86,15 @@ def get_bulk_configs(request):
 
 # External Phone Services for remote phone reprogramming, etc.
 def dump_device_config(request, device_id, software_version, config_version):
-    # Broken (for now) - stubbing it out.
-    raise Http404
-    
     device = get_document_or_404(Device, device_id=device_id)
+    
     try:
-        config = device.config
+        config = device.get_device_config()
         request_success = True
     except:
         # No assigned or default config found - Log this?
         config = None
-        request_success = False    
+        request_success = False
     
     if config:
         # Ping the primary server to record the device's request.
@@ -135,10 +133,15 @@ def dump_device_config(request, device_id, software_version, config_version):
                 new_cr.save()
         
         # Display XML Configuration to Phone.
-        device.last_config_request = datetime.now()
-        device.save()
-        parsed_xml = config.get_parsed_xml()
-        return HttpResponse(parsed_xml.toprettyxml(), mimetype='application/xml')
+        try:
+            # This could fail if default config used and device config points
+            # to an invalid DBREF.  Don't want to fail to serve the default config
+            # if an error occurs in saving.
+            device.last_config_request = datetime.now()
+            device.save()
+        except:
+            pass
+        return HttpResponse(config.xml, mimetype='application/xml')
     else:
         raise Http404
 

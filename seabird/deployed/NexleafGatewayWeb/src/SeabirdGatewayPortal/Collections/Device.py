@@ -7,7 +7,7 @@ from SeabirdGatewayPortal.Collections.Config import Config
 class Device(Document):
     device_id = StringField(unique=True, max_length=128, required=True)
     device_name = StringField(max_length=128)
-    config = ReferenceField('Config', required=True)
+    config = ReferenceField('Config', required=False)
     
     # Last updated from a bulk update.
     last_updated = DateTimeField(required=True)
@@ -18,6 +18,27 @@ class Device(Document):
     meta = {
         'ordering': ['device_id']
     }
+    
+    def get_device_config(self):
+        """
+            Returns the Config object associated with this Device.
+            If none is referenced, then returns the default configuration
+            Raises exception if no default configuration is found.
+        """
+        config = self.config
+        try:
+            # Force evaluation so we can determine that config is NOT None AND 
+            # points to an actual object (lazy evaluation in mongoengine hides 
+            # invalid DBRef).
+            test_config = config.xml
+        except:
+            try:
+                # Use the default config (if it exists).
+                config = Config.objects.get(default_config=True)
+            except:
+                raise Exception('No Default Object Found.')
+        return config
+    
     
     def __unicode__(self):
         if not self.device_name:
