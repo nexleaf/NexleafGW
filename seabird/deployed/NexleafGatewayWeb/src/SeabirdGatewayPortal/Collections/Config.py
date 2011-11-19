@@ -148,7 +148,7 @@ class Config(Document):
         # Create a unique version number using the "now" time.
         # Micro Seconds + Random Number should ensure uniqueness
         # (in case datetime is caching somehow)
-        self.version = '%i%i%i%i%i%i%i%i' % \
+        self.version = '%i%i%i%i%i%i%06i%i' % \
             (now.year, now.month, now.day,
              now.hour, now.minute, now.second,
              now.microsecond, randint(1000, 9999))
