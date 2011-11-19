@@ -17,9 +17,9 @@
     <Schedule>
         {% for recording in config.recording_schedules %}
         <Recording>
-            <StartTime>{{ recording.start_time.hour }}{{ recording.start_time.minute }}</StartTime>
+            <StartTime>{{ recording.start_time.hour|zp:"2" }}{{ recording.start_time.minute|zp:"2"  }}</StartTime>
             <StartDate>{{ recording.start_date|date:"Ymd" }}</StartDate>
-            <EndTime>{{ recording.end_time.hour }}{{ recording.end_time.minute }}</EndTime>
+            <EndTime>{{ recording.end_time.hour|zp:"2"  }}{{ recording.end_time.minute|zp:"2"  }}</EndTime>
             <EndDate>{{ recording.end_date|date:"Ymd" }}</EndDate>
             <DurationMins>{{ recording.duration_min }}</DurationMins>
             <IntervalMins>{{ recording.interval_min }}</IntervalMins>

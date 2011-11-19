@@ -26,3 +26,12 @@ def form_field(context, field, field_class=''):
     }
     return context
 
+
+@register.filter
+def zp(value, desired_digits):
+    '''
+        Zero Pad a number.
+    '''
+    return str(value).zfill(int(desired_digits))
+
+
