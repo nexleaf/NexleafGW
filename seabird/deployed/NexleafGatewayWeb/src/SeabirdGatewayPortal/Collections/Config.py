@@ -140,19 +140,20 @@ class Config(Document):
         return '%s' % self.name
     
     def save(self):
+        now = datetime.now()
         if not self.id:
-            now = datetime.now()
             self.created_date = now
-            
-            # Create a unique version number using the "now" time.
-            # Micro Seconds + Random Number should ensure uniqueness
-            # (in case datetime is caching somehow)
-            self.version = '%i%i%i%i%i%i%i%i' % \
-                (now.year, now.month, now.day,
-                 now.hour, now.minute, now.second,
-                 now.microsecond, randint(1000, 9999))
-            
-            # TODO: Ensure uniqueness by performing a query?
+        
+        # Version Number updated EACH TIME the config is edited (not just on creation).
+        # Create a unique version number using the "now" time.
+        # Micro Seconds + Random Number should ensure uniqueness
+        # (in case datetime is caching somehow)
+        self.version = '%i%i%i%i%i%i%i%i' % \
+            (now.year, now.month, now.day,
+             now.hour, now.minute, now.second,
+             now.microsecond, randint(1000, 9999))
+        
+        # TODO: Ensure uniqueness by performing a query?
         
         # Save object.
         super(Config, self).save()
