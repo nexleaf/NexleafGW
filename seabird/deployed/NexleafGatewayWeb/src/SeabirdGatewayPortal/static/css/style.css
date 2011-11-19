@@ -55,6 +55,8 @@ div.nexleaf_logo {float:right;}
 /* Modified style for checkboxes */
 .checkbox_field .form_field label {display:inline;float:left; text-align:left;}
 
+
+.readonly_field { color:#777;}
 .required {color:red;font-size:12px;vertical-align:top;}
 .fielderror {background:#FBE3E4;color:#8a1f11;border:2px solid #FBC2C4;}
 

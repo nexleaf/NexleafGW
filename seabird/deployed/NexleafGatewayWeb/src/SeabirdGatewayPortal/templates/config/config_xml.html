@@ -11,7 +11,7 @@
         <UploadInterval>{{ config.upload_interval }}</UploadInterval>
         <LogcatToDbFlushInterval>{{ config.logcat_to_db_flush_interval }}</LogcatToDbFlushInterval>
         <LogDbToFileFlushCycle>{{ config.log_db_to_file_flush_cycle }}</LogDbToFileFlushCycle>
-        <RebootTime></RebootTime>
+        <RebootTime>{{ config.reboot_time.hour|zp:"2" }}{{ config.reboot_time.minute|zp:"2"  }}</RebootTime>
     </Settings>
     
     <Schedule>

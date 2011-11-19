@@ -42,7 +42,21 @@ class ConfigForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # Used to determine if editing or creating a config
         self.config_id = kwargs.pop('config_id', None)
+        
+        # Call standard init.
         super(ConfigForm, self).__init__(*args, **kwargs)
+        
+        # Make fields readonly for Tern Island Deployment.
+        readonly_fields = ['deployment_id', 'station_id', 'upload_url',
+            'radio_upload_mode', 'upload_interval', 'logcat_to_db_flush_interval',
+            'log_db_to_file_flush_cycle', 'reboot_time']
+        
+        # Select drop down doesn't work as readonly - force to be TextInput
+        self.fields['radio_upload_mode'].widget = forms.TextInput()
+        
+        for field_name in readonly_fields:
+            self.fields[field_name].widget.attrs['readonly'] = "readonly"
+            self.fields[field_name].widget.attrs['class'] = "readonly_field"
     
     def clean_default_config(self):
         default_config = self.cleaned_data["default_config"]
