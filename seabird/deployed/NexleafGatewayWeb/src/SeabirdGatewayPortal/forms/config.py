@@ -93,19 +93,20 @@ class RecordingForm(forms.Form):
     sampling_length_min = forms.IntegerField(required=True, min_value=0, label="Sampling Length", help_text="In Minutes")
     
     def clean(self):
-        start_date = self.cleaned_data.get('start_date')
-        end_date = self.cleaned_data.get('end_date')
+        start_date = self.cleaned_data.get('start_date', None)
+        end_date = self.cleaned_data.get('end_date', None)
         
-        start_time = self.cleaned_data.get('start_time')
-        end_time = self.cleaned_data.get('end_time')
+        start_time = self.cleaned_data.get('start_time', None)
+        end_time = self.cleaned_data.get('end_time', None)
         
         if start_date and end_date:
             # Make sure end date is after start date.
             if start_date > end_date:
                 raise forms.ValidationError("Start date must be before or equal to end date.")
         
-        # If start time is 00:00:00 just an "if start_time" check would fail.  Be explicit!
-        if start_time != '' and end_time != '':
+        # If start time is 00:00:00 just an "if start_time" check will fail.  Be explicit!
+        # https://code.djangoproject.com/changeset/3563  / https://code.djangoproject.com/ticket/2528
+        if start_time != '' and start_time != None and end_time != '' and end_time != None:
             
             # Make sure start time is before end time.  No midnight crossing allowed!
             if start_time >= end_time:

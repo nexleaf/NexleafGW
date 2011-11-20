@@ -11,15 +11,15 @@
         <UploadInterval>{{ config.upload_interval }}</UploadInterval>
         <LogcatToDbFlushInterval>{{ config.logcat_to_db_flush_interval }}</LogcatToDbFlushInterval>
         <LogDbToFileFlushCycle>{{ config.log_db_to_file_flush_cycle }}</LogDbToFileFlushCycle>
-        <RebootTime>{{ config.reboot_time.hour|zp:"2" }}{{ config.reboot_time.minute|zp:"2"  }}</RebootTime>
+        <RebootTime>{{ config.reboot_time|time:"Hi" }}</RebootTime>
     </Settings>
     
     <Schedule>
         {% for recording in config.recording_schedules %}
         <Recording>
-            <StartTime>{{ recording.start_time.hour|zp:"2" }}{{ recording.start_time.minute|zp:"2"  }}</StartTime>
+            <StartTime>{{ recording.start_time|time:"Hi" }}</StartTime>
             <StartDate>{{ recording.start_date|date:"Ymd" }}</StartDate>
-            <EndTime>{{ recording.end_time.hour|zp:"2"  }}{{ recording.end_time.minute|zp:"2"  }}</EndTime>
+            <EndTime>{{ recording.end_time|time:"Hi" }}</EndTime>
             <EndDate>{{ recording.end_date|date:"Ymd" }}</EndDate>
             <DurationMins>{{ recording.duration_min }}</DurationMins>
             <IntervalMins>{{ recording.interval_min }}</IntervalMins>
