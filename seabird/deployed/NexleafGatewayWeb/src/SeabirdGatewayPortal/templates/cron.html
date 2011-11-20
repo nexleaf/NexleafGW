@@ -25,8 +25,8 @@ crontab -l command output
 {{ output }}
 </pre>
 
-<h2><a href="{% url SeabirdGatewayPortal.views.cron.toggle_default_cron %}">Toggle Default</a></h2>
 
+<!--
 <hr>
 <h2>Manual Set</h2>
 
@@ -35,7 +35,7 @@ crontab -l command output
 <br>
 <input type=submit value="submit">
 </form>
-
+-->
 <div class="clear"></div>
 
 <div class="cron_form">
@@ -43,7 +43,7 @@ crontab -l command output
         {% csrf_token %}
         
         <div class="cron_hour_label">
-            Select the hours you'd like the cron to execute each day:
+            Select the hours you'd like the LOGS to transfer!
         </div>
         
         {% if cron_hour_errors %}
@@ -51,14 +51,14 @@ crontab -l command output
             {{ cron_hour_errors }}
         </div>
         {% endif %}
-        <a href="javascript:void(0);" class="select_all_hours">Select All</a> /
-        <a href="javascript:void(0);" class="select_none">Select None</a>
+        <a href="javascript:void(0);" class="select_all_hours_logs">Select All</a> /
+        <a href="javascript:void(0);" class="select_none_logs">Select None</a>
         <br />
         
-        {% for cron_hour in cron_hour_choices %}
+        {% for cron_hour in logs_cron_hours %}
             <span class="cron_hour_wrapper">
                 <label for="id_cron_hours_{{ cron_hour.0 }}">
-                    <input type="checkbox" name="cron_hours" value="{{ cron_hour.0 }}" id="id_cron_hours_{{ cron_hour.0 }}" />
+                    <input type="checkbox" name="cron_hours_logs" value="{{ cron_hour.0 }}" id="logs_id_cron_hours_{{ cron_hour.0 }}" {{ cron_hour.2 }} />
                     {{ cron_hour.1 }}
                 </label>
             </span>
@@ -67,12 +67,80 @@ crontab -l command output
                 {% endif %}
         {% endfor %}
         <br />
+	<input type="hidden" name="logs" value="logs" />
+        <input type="submit" value="Submit">
+    </form>
+
+<hr>
+    <form method="post" action="{% url view_cron %}">
+        {% csrf_token %}
+        
+        <div class="cron_hour_label">
+            Select the hours you'd like the DATA to transfer!
+        </div>
+        
+        {% if cron_hour_errors %}
+        <div class="fielderror" style="padding:5px;">
+            {{ cron_hour_errors }}
+        </div>
+        {% endif %}
+        <a href="javascript:void(0);" class="select_all_hours_audio">Select All</a> /
+        <a href="javascript:void(0);" class="select_none_audio">Select None</a>
+        <br />
+        
+        {% for cron_hour in audio_cron_hours %}
+            <span class="cron_hour_wrapper">
+                <label for="id_cron_hours_{{ cron_hour.0 }}">
+                    <input type="checkbox" name="cron_hours_audio" value="{{ cron_hour.0 }}" id="audio_id_cron_hours_{{ cron_hour.0 }}" {{ cron_hour.2 }} />
+                    {{ cron_hour.1 }}
+                </label>
+            </span>
+                {% if forloop.counter|divisibleby:"8" %}
+                    <br />
+                {% endif %}
+        {% endfor %}
+        <br />
+	<input type="hidden" name="audio" value="audio" />
+        <input type="submit" value="Submit">
+    </form>
+<hr>
+
+    <form method="post" action="{% url view_cron %}">
+        {% csrf_token %}
+        
+        <div class="cron_hour_label">
+            Select the hours you'd like to KILL ALL TRANSFERS by!
+        </div>
+        
+        {% if cron_hour_errors %}
+        <div class="fielderror" style="padding:5px;">
+            {{ cron_hour_errors }}
+        </div>
+        {% endif %}
+        <a href="javascript:void(0);" class="select_all_hours_killfm">Select All</a> /
+        <a href="javascript:void(0);" class="select_none_killfm">Select None</a>
+        <br />
+        
+        {% for cron_hour in killfm_cron_hours %}
+            <span class="cron_hour_wrapper">
+                <label for="id_cron_hours_{{ cron_hour.0 }}">
+                    <input type="checkbox" name="cron_hours_killfm" value="{{ cron_hour.0 }}" id="killfm_id_cron_hours_{{ cron_hour.0 }}" {{ cron_hour.2 }} />
+                    {{ cron_hour.1 }}
+                </label>
+            </span>
+                {% if forloop.counter|divisibleby:"8" %}
+                    <br />
+                {% endif %}
+        {% endfor %}
+        <br />
+	<input type="hidden" name="killfm" value="killfm" />
         <input type="submit" value="Submit">
     </form>
 </div>
 
 
 <br>
+<!--
 <hr><hr><hr>
 <h2>Notes:</h2>
 Cron entries should look like this (the below is the default and means every 5 mins for the first, and every 30 mins for the second):
@@ -81,5 +149,5 @@ Cron entries should look like this (the below is the default and means every 5 m
 */5 * * * * /var/www/seabird/bin/filemover &> /dev/null
 0,30 * * * * wget http://localhost/seabird/api/configuration/bulk/get/ &> /dev/null
 </pre>
-
+-->
 {% endblock %}

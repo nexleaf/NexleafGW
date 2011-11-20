@@ -25,51 +25,142 @@ log = getLog('views')
 log.setLevel(logging.DEBUG)
 
 
+logs_cron_entry = '%s*/5 %s * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-logs.conf &> /dev/null\n'
+audio_cron_entry = '%s*/5 %s * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-data.conf &> /dev/null\n'
+#bulk_get_cron_entry = '%s0,30 %s * * * wget -O /dev/null http://localhost/seabird' + reverse('get_bulk_configs') + ' &> /dev/null\n'
+bulk_get_cron_entry = '%s0,30 %s * * * wget -O /dev/null http://localhost/seabird%s &> /dev/null\n'
+killfm_cron_entry = '%s*/15 %s * * * /var/www/seabird/bin/killfilemover &> /dev/null\n'
+
+
+def times_from_cron_string(cronstring):
+    retarr = [['%i' % x, '%02i:00' % x, ''] for x in range(0,24)]
+    retbool = True
+    if cronstring.startswith('#'):
+        retbool = False
+    else:
+        hours = cronstring.split(' ')[1]
+        if hours == "*":
+            for i in range(len(retarr)):
+                retarr[i][2] = 'checked'
+        else:
+            for i in hours.split(','):
+                retarr[int(i)][2] = 'checked'
+    return (retarr, retbool)
+
+
+def times_from_post_list(postlist):
+    retarr = [['%i' % x, '%02i:00' % x, ''] for x in range(0,24)]
+    retbool = True
+    if len(postlist) == 0:
+        retbool = False
+    else:
+        retbool = True
+    for i in range(24):
+        if str(i) in postlist:
+            retarr[i][2] = 'checked'
+        else:
+            retarr[i][2] = ''
+    return (retarr, retbool)
+
+def times_all_checked(alltimes):
+    for i in alltimes:
+        if i[2] == '':
+            return False
+    return True
+
+def cron_enabled(is_enabled):
+    if is_enabled:
+        return ''
+    return '#'
+
+def cron_times_from_times(enabled, cron_hours):
+    if enabled is False:
+        return '*'
+    retstr = ''
+    first = True
+    for i in range(len(cron_hours)):
+        if cron_hours[i][2] == 'checked':
+            if first:
+                retstr += cron_hours[i][0]
+                first = False
+            else:
+                retstr += "," + cron_hours[i][0]
+    return retstr
+
+
 @login_required
 def view_cron(request):
-    # For cron checkboxes (values, displayed_values)
-    cron_hour_choices = [('%i' % x, '%02i:00' % x) for x in range(0,24)]
-    cron_hour_errors = ''
-    if request.method == 'POST':
-        cron_hour_list = request.POST.getlist('cron_hours')
-        if len(cron_hour_list) > 0:
-            hour_string = ''
-            for hour in cron_hour_list:
-                hour_string += '%s,' % hour
-            hour_string = hour_string.rstrip(',')
-        else:
-            # No hours selected - potentially issue an error message here if 
-            # at least one must be selected
-            messages.error(request, FORM_ERROR_MSG)
-            cron_hour_errors = "At least one hour MUST be selected."
-            hour_string = '*'
-        
-        # Cron command - do something with it.  (Currently just output to stdout for testing)
-        cron_time_command = '* %s * * *' % hour_string
-        print '-'*100
-        print cron_time_command
-        print '-'*100
-        
-    # Cron retrieval and management.
+
+    logs_cron_hours = []
+    audio_cron_hours = []
+    bulk_get_cron_hours = []
+    killfm_cron_hours = []
+    logs_enabled = True
+    audio_enabled = True
+    bulk_enabled = True
+    killfm_enabled = True
+    logs_cron_errors = ''
+    audio_cron_errors = ''
+    bulk_get_cron_errors = ''
+    killfm_cron_errors = ''
+
+    # read the crontab
     (status, output) = commands.getstatusoutput("crontab -l")
-    if status == 0:
-        default = output
-    else:
-        default = '# m h  dom mon dow   command\n' + \
-            '*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-logs.conf &> /dev/null\n' + \
-            '*/5 * * * * /var/www/seabird/bin/filemover /var/www/seabird/conf/filemover-data.conf &> /dev/null\n' + \
-            '0,30 * * * * wget -O /dev/null http://localhost/seabird%s &> /dev/null\n' % reverse('get_bulk_configs') + \
-            '0,30 6 * * * /var/www/seabird/bin/killfilemover &> /dev/null'
-        default = '' # overridden for local development.
+    cronlines = output.split('\n')
+    for line in cronlines:
+        if line.find("filemover-logs") > -1:
+            (logs_cron_hours, logs_enabled) = times_from_cron_string(line)
+
+        if line.find("filemover-data") > -1:
+            (audio_cron_hours, audio_enabled) = times_from_cron_string(line)
+
+        if line.find("killfilemover") > -1:
+            (killfm_cron_hours, killfm_enabled) = times_from_cron_string(line)
+
+        if line.find("wget") > -1:
+            (bulk_get_cron_hours, bulk_enabled) = times_from_cron_string(line)
+
+    if request.method == 'POST':
+        if 'logs' in request.POST.keys():
+            new_hour_list = request.POST.getlist('cron_hours_logs')
+            log.info(new_hour_list)
+            (logs_cron_hours, logs_enabled) = times_from_post_list(new_hour_list)
+
+        if 'audio' in request.POST.keys():
+            new_hour_list = request.POST.getlist('cron_hours_audio')
+            log.info(new_hour_list)
+            (audio_cron_hours, audio_enabled) = times_from_post_list(new_hour_list)
+
+        if 'killfm' in request.POST.keys():
+            new_hour_list = request.POST.getlist('cron_hours_killfm')
+            log.info(new_hour_list)
+            (killfm_cron_hours, killfm_enabled) = times_from_post_list(new_hour_list)
+
+        cronstring = ''
+        cronstring += logs_cron_entry % (cron_enabled(logs_enabled), cron_times_from_times(logs_enabled, logs_cron_hours))
+        cronstring += audio_cron_entry % (cron_enabled(audio_enabled), cron_times_from_times(audio_enabled, audio_cron_hours))
+        cronstring += killfm_cron_entry % (cron_enabled(killfm_enabled), cron_times_from_times(killfm_enabled, killfm_cron_hours))
+        cronstring += bulk_get_cron_entry % (cron_enabled(bulk_enabled), cron_times_from_times(bulk_enabled, logs_cron_hours), reverse('get_bulk_configs'))
+        
+        tf = tempfile.mktemp()
+        fd = open(tf, 'w')
+        fd.write(cronstring)
+        fd.flush()
+        fd.close()
     
+        (status, output) = commands.getstatusoutput("crontab -r")
+        (status, output) = commands.getstatusoutput("crontab %s" % tf)
+        (status, output) = commands.getstatusoutput("crontab -l")
+        #os.remove(tf)
+
     return render_to_response('cron.html', 
         {
             'page_title':'Cron Status',
             'status': status,
             'output': output,
-            'default': default,
-            'cron_hour_choices':cron_hour_choices,
-            'cron_hour_errors':cron_hour_errors,
+            'logs_cron_hours': logs_cron_hours,
+            'audio_cron_hours': audio_cron_hours,
+            'killfm_cron_hours': killfm_cron_hours,
         }, context_instance=RequestContext(request))
 
 
@@ -86,21 +177,42 @@ def toggle_default_cron(request):
 
 @login_required
 def set_cron(request):    
-    if "cronentry" not in request.POST.keys():
-        return redirect('/seabird/cron/')
-    
-    thedata = request.POST['cronentry']
-    
-    tf = tempfile.mktemp()
-    fd = open(tf, 'w')
-    fd.write(thedata)
-    fd.flush()
-    fd.close()
-    
-    (status, output) = commands.getstatusoutput("crontab -r")
-    (status, output) = commands.getstatusoutput("crontab %s" % tf)
-    
+    #if "cronentry" not in request.POST.keys():
     return redirect('/seabird/cron/')
+    
+    # if request.method == 'POST':
+    #     cron_hour_list = request.POST.getlist('cron_hours')
+    #     if len(cron_hour_list) > 0:
+    #         hour_string = ''
+    #         for hour in cron_hour_list:
+    #             hour_string += '%s,' % hour
+    #         hour_string = hour_string.rstrip(',')
+    #     else:
+    #         # No hours selected - potentially issue an error message here if 
+    #         # at least one must be selected
+    #         messages.error(request, FORM_ERROR_MSG)
+    #         cron_hour_errors = "At least one hour MUST be selected."
+    #         hour_string = '*'
+        
+    #     # Cron command - do something with it.  (Currently just output to stdout for testing)
+    #     cron_time_command = '*/5 %s * * *' % hour_string
+    #     print '-'*100
+    #     print cron_time_command
+    #     print '-'*100
+
+    # thedata = request.POST['cronentry']
+    
+    # tf = tempfile.mktemp()
+    # fd = open(tf, 'w')
+    # fd.write(thedata)
+    # fd.flush()
+    # fd.close()
+    
+    # (status, output) = commands.getstatusoutput("crontab -r")
+    # (status, output) = commands.getstatusoutput("crontab %s" % tf)
+    # os.remove(tf)
+    
+    # return redirect('/seabird/cron/')
 
 
     
