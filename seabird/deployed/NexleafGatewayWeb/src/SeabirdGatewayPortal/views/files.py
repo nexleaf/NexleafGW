@@ -9,6 +9,7 @@ import zipfile
 import tempfile
 import subprocess
 import struct
+import pytz
 
 from datetime import date
 from datetime import datetime
@@ -306,6 +307,8 @@ def view_device_day(request, device_id=None, viewdate=None):
         'alldata': alldata,
         'alllogs': alllogs,
         'page_title':'Data for %s on %s' % (dev, datedir),
+        'currdate': datetime.now(),
+        'currdate_utc': datetime.now(pytz.UTC),
     })
     return HttpResponse(t.render(c))
     
@@ -431,7 +434,9 @@ def view_incoming_grid(request, startdate=None):
         'totaldata': totaldata,
         'totallogs': totallogs,
         'diskusage': diskusage,
-        'page_title':'Files Ready To Send'
+        'page_title':'Files Ready To Send',
+        'currdate': datetime.now(),
+        'currdate_utc': datetime.now(pytz.UTC),
     })
     return HttpResponse(t.render(c))
         
@@ -497,7 +502,9 @@ def view_incoming_grid_old(request):
         'devdata': alldata.values(),
         'totalfiles': len(filelist),
         'totaldata': totaldata,
-        'page_title':'In / Out Files'
+        'page_title':'In / Out Files',
+        'currdate': datetime.now(),
+        'currdate_utc': datetime.now(pytz.UTC),
     })
     return HttpResponse(t.render(c))
 

@@ -161,6 +161,7 @@ def view_cron(request):
             'logs_cron_hours': logs_cron_hours,
             'audio_cron_hours': audio_cron_hours,
             'killfm_cron_hours': killfm_cron_hours,
+            'currdate': datetime.now(),
         }, context_instance=RequestContext(request))
 
 

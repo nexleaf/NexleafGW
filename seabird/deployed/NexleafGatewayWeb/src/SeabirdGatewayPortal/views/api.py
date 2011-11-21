@@ -13,7 +13,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import Config, ConfigRequestCache
+from SeabirdGatewayPortal.Collections.Config import Config, ConfigRequestCache, DeviceConfigRequest
 from SeabirdGatewayPortal.Collections.Device import Device
 
 from SeabirdGatewayPortal.utils.Logger import getLog
@@ -96,6 +96,16 @@ def dump_device_config(request, device_id, software_version, config_version):
         config = None
         request_success = False
     
+    # Log the request
+    new_request = DeviceConfigRequest(
+        device=device,
+        software_version=software_version,
+        current_config_version=config_version,
+        served_config=config,
+        request_success=request_success,
+    )
+    new_request.save(request)
+
     if config:
         # Ping the primary server to record the device's request.
         # Cache the ping and retry later if is internet down.

@@ -12,7 +12,7 @@ from django.template import RequestContext
 from mongoengine import connect
 from mongoengine.django.shortcuts import get_document_or_404
 
-from SeabirdGatewayPortal.Collections.Config import Config
+from SeabirdGatewayPortal.Collections.Config import Config, DeviceConfigRequest
 from SeabirdGatewayPortal.Collections.Device import Device
 from SeabirdGatewayPortal.common.constants import FORM_ERROR_MSG
 from SeabirdGatewayPortal.forms.device import DeviceForm, NewDeviceForm
@@ -46,9 +46,11 @@ def show_all_devices(request):
 @login_required
 def show_device(request, device_id=None):
     device = get_document_or_404(Device, device_id=device_id)
+    config_requests = device.get_config_requests()[:10]
     return render_to_response('device/device.html', 
         {
             'device':device,
+            'config_requests': config_requests,
             'page_title': 'View Device: %s' % device,
         }, context_instance=RequestContext(request))
 

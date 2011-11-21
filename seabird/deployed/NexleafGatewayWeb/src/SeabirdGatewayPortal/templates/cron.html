@@ -8,13 +8,14 @@
 
 {% block header %}
     <div class="span-24 last">
-        <h2 class="page_header">{{ page_title }}</h2>
+        <h2 class="page_header">{{ page_title }} -- Current time is: {{ currdate }}</h2>
     </div>
     <div class="clear"></div>
 {% endblock %}
 
 {% block content %}
 
+<h3>All times are local time!</h3>
 
 <br>
 crontab -l command output
@@ -37,6 +38,8 @@ crontab -l command output
 </form>
 -->
 <div class="clear"></div>
+<br>
+<hr>
 
 <div class="cron_form">
     <form method="post" action="{% url view_cron %}">

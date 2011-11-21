@@ -5,7 +5,7 @@ from xml.dom import minidom
 from django.template.loader import render_to_string
 
 from mongoengine import BooleanField, DateTimeField, DictField, Document, \
-    IntField, ListField, SortedListField, StringField, URLField
+    IntField, ListField, SortedListField, StringField, URLField, ReferenceField
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 DATE_FORMAT = '%Y-%m-%d'
@@ -175,3 +175,53 @@ class ConfigRequestCache(Document):
         super(ConfigRequestCache, self).save()
     
 
+
+
+
+class BaseDeviceConfigRequest(Document):
+    """ The Base Class for Individual and Bulk DeviceConfig Requests """
+    # Whether a config was successfully displayed to the device.
+    request_success = BooleanField(default=False, required=True)
+    
+    # Can be used to filter internal vs gateway vs phone requests
+    request_referrer = StringField(required=False)
+    request_remote_addr = StringField(required=False)
+    request_remote_host = StringField(required=False)
+    request_user_agent = StringField(required=False)
+    
+    # Timestamp of the request
+    request_date = DateTimeField(required=True)
+    
+    meta = {
+        'ordering': ['-request_date']
+    }
+    
+    def save(self, request=None):
+        # Only perform during object "creation".
+        if not self.id:
+            self.request_date = datetime.now()
+            if request:
+                # Grab Request Header info
+                self.request_referrer=request.META.get('HTTP_REFERER', None)
+                self.request_remote_addr=request.META.get('REMOTE_ADDR', None)
+                self.request_remote_host=request.META.get('REMOTE_HOST', None)
+                self.request_user_agent=request.META.get('HTTP_USER_AGENT', None)
+        
+        super(BaseDeviceConfigRequest, self).save()
+
+
+# Tracking for when devices request their configurations.
+class DeviceConfigRequest(BaseDeviceConfigRequest):
+    """ Individual DeviceConfig Requests """
+    device = ReferenceField('Device')
+    software_version = StringField(required=False) # Software version on the device
+    current_config_version = StringField(required=False) # Config version currently on the device
+    served_config = ReferenceField('Config', required=False)  # New configuration that is served to device.
+    
+    meta = {
+        'ordering': ['-request_date']
+    }
+    
+    def __unicode__(self):
+        return '%s: %s' % (self.device, self.request_date)
+    

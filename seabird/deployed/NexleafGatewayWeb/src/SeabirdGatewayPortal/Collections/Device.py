@@ -2,7 +2,7 @@ from datetime import datetime
 
 from mongoengine import Document, DateTimeField, ReferenceField, StringField
 
-from SeabirdGatewayPortal.Collections.Config import Config
+from SeabirdGatewayPortal.Collections.Config import Config, DeviceConfigRequest
 
 class Device(Document):
     device_id = StringField(unique=True, max_length=128, required=True)
@@ -40,6 +40,14 @@ class Device(Document):
         return config
     
     
+    def get_config_requests(self):
+        """
+            Get a list of all the configuration requests made by this device.
+            Ordered by date.
+        """
+        config_requests = DeviceConfigRequest.objects(device=self)
+        return config_requests
+        
     def __unicode__(self):
         if not self.device_name:
             return '%s' % self.device_id

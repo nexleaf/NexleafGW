@@ -52,6 +52,58 @@
         </th>
         <td>{{ device.last_config_request|date:"M j, Y, g:i a" }}</td>
     </tr>
+    <tr>
+        <th>
+            Config Requests:<br />
+            <span class="smaller">(Last 10 Requests)</span>
+        </th>
+        <td>
+            {% if config_requests %}
+            <table class="config_requests_table tablesorter data_table">
+                <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Successful?</th>
+                    <th>SW Version</th>
+                    <th>Config Version</th>
+                    <th>Served Config</th>
+                    <th>Remote Addr</th>
+                    <th>Remote Host</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cr in config_requests %}
+                <tr class="{% cycle 'even' 'odd' %}">
+                    <td>{{ cr.request_date|date:"M j, Y, g:i a" }}</td>
+                    <td class="center">
+                        {% if cr.request_success %}
+                            <span class="hide">Yes</span>
+                            <img src="{{ MEDIA_URL }}images/icons/accept.png">
+                        {% else %}
+                            <span class="hide">No</span>
+                            <img src="{{ MEDIA_URL }}images/icons/delete.png">
+                        {% endif %}
+                    </td>
+                    <td>{{ cr.software_version }}</td>
+                    <td>{{ cr.current_config_version }}</td>
+                    <td>
+                        {% if cr.served_config %}
+                            <a href="{% url show_config cr.served_config.id %}">{{ cr.served_config }}</a>
+                        {% else %}
+                            {{ cr.served_config }}
+                        {% endif %}
+                    </td>
+                    <td>{{ cr.request_remote_addr }}</td>
+                    <td>{{ cr.request_remote_host }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                No configuration requests recorded.
+            {% endif %}
+        </td>
+    </tr>
 </table>
 
 <p class="actions">
