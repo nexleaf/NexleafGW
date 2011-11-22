@@ -24,7 +24,7 @@ if [ -e /var/www/seabird/conf/filemover-pass.conf ]; then
     source /var/www/seabird/conf/filemover-pass.conf
 fi
 
-RSOPTS="-q --timeout=45 --contimeout=45 --partial-dir=/var/www/seabird/tmp --delay-updates --temp-dir=/var/www/seabird/tmp --remove-source-files"
+RSOPTS="-q -d --timeout=45 --contimeout=45 --partial-dir=/var/www/seabird/tmp --delay-updates --temp-dir=/var/www/seabird/tmp --remove-source-files"
 
 # the cmd: rsync -v -v --no-motd --partial-dir=/tmp --delay-updates --temp-dir=/tmp -z --remove-source-files --stats -h --progress --password-file=/opt/conf/rsync.pass /opt/tmp/rsynctest/filemover/20090305205919.TO.PE36.bundle_q330_packets.tar.gz.dts rsync://data@169.232.144.204/peruin/filemover/
 
@@ -82,9 +82,9 @@ THEFILES=`find $THEDIR`
 
 for FILE in $THEFILES; do
 
-    if [ -d $FILE ]; then
-	continue
-    fi
+    #if [ -d $FILE ]; then
+	#	continue
+    #fi
 
     FILESIZE=`stat -c "%s" $FILE`
     STARTTIME=`date +%s`
